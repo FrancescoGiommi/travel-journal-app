@@ -46,25 +46,37 @@ function App() {
     return false;
   }
 
-  async function fetchPosts() {
+  async function fetchPosts(): Promise<TravelPost[] | null> {
     try {
-      const { data, error } = await supabase
-        .from("japan_travel_posts")
-        .select("*");
+      const response = await fetch(
+        "https://pdorueopvdnmydujmqzg.supabase.co/rest/v1/japan_travel_posts",
+        {
+          headers: {
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (error) {
-        console.error("Errore da Supabase:", error.message);
-        return null;
+      if (!response.ok) {
+        throw new Error(
+          `Errore HTTP ${response.status} ${response.statusText}`
+        );
       }
 
-      if (data && Array.isArray(data)) {
-        console.log("Dati ricevuti da Supabase:", data);
-        const validPosts = data.filter(isTravelPost);
-        console.log("Dati validati:", validPosts);
-        setPosts(validPosts);
+      const dati: unknown = await response.json();
+
+      if (!Array.isArray(dati)) {
+        throw new Error("Formato dei dati non valido: atteso un array");
       }
+
+      const validPosts = dati.filter(isTravelPost);
+      console.log(validPosts);
+      return validPosts;
     } catch (error) {
-      console.error("Errore di fetch:", error);
+      console.error("Errore nella fetch:", error);
+      return null;
     }
   }
 
