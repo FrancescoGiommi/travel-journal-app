@@ -72,6 +72,7 @@ function App() {
       }
 
       const validPosts = dati.filter(isTravelPost);
+
       console.log(validPosts);
       return validPosts;
     } catch (error) {
@@ -81,8 +82,13 @@ function App() {
   }
 
   useEffect(() => {
-    fetchPosts();
+    fetchPosts().then((posts) => {
+      if (posts) {
+        setPosts(posts);
+      }
+    });
   }, []);
+
   return <></>;
 }
 
