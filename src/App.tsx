@@ -2,49 +2,9 @@ import "./App.css";
 import { supabase } from "../supabase/supabaseClient";
 import type { TravelPost } from "../types";
 import { useEffect, useState } from "react";
-
+import { isTravelPost } from "../typeGuard/typeGuard";
 function App() {
   const [posts, setPosts] = useState<TravelPost[]>([]);
-
-  function isTravelPost(dati: unknown): dati is TravelPost {
-    if (dati && typeof dati === "object") {
-      const obj = dati as { [key: string]: unknown };
-
-      const isValid =
-        "titolo" in obj &&
-        typeof obj.titolo === "string" &&
-        "data" in obj &&
-        typeof obj.data === "string" &&
-        "luogo" in obj &&
-        typeof obj.luogo === "string" &&
-        "latitudine" in obj &&
-        typeof obj.latitudine === "number" &&
-        "longitudine" in obj &&
-        typeof obj.longitudine === "number" &&
-        "media_url" in obj &&
-        typeof obj.media_url === "string" &&
-        "descrizione" in obj &&
-        typeof obj.descrizione === "string" &&
-        "umore" in obj &&
-        typeof obj.umore === "string" &&
-        "riflessione_positiva" in obj &&
-        typeof obj.riflessione_positiva === "string" &&
-        "riflessione_negativa" in obj &&
-        typeof obj.riflessione_negativa === "string" &&
-        "impegno_fisico" in obj &&
-        typeof obj.impegno_fisico === "number" &&
-        "effort_economico" in obj &&
-        typeof obj.effort_economico === "number" &&
-        "spesa_euro" in obj &&
-        typeof obj.spesa_euro === "number" &&
-        "tags" in obj &&
-        Array.isArray(obj.tags) &&
-        obj.tags.every((tag) => typeof tag === "string");
-
-      return isValid;
-    }
-    return false;
-  }
 
   async function fetchPosts(): Promise<TravelPost[] | null> {
     try {
@@ -89,7 +49,33 @@ function App() {
     });
   }, []);
 
-  return <></>;
+  return (
+    <>
+      <div className="container">
+        <h1>Diario di viaggio</h1>
+
+        <div className="row justify-content-center">
+          {posts.map((post) => (
+            <div
+              key={post.id}
+              className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
+            >
+              <div className="card h-100">
+                <img
+                  src={post.media_url}
+                  className="card-img-top post-img"
+                  alt={post.titolo}
+                />
+                <div className="card-body">
+                  <p className="card-text">{post.descrizione}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default App;

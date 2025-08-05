@@ -1,4 +1,5 @@
 export type TravelPost = {
+  id: number;
   titolo: string;
   data: string;
   luogo: string;
