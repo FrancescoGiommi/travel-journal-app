@@ -1,10 +1,10 @@
-type PostCard = {
+type PostCardProps = {
   image: string;
   title: string;
   description: string;
 };
 
-export default function PostCard({ image, description, title }: PostCard) {
+export default function PostCard({ image, description, title }: PostCardProps) {
   return (
     <>
       <img src={image} className="card-img-top post-img" alt={title} />
