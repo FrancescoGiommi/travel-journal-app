@@ -7,7 +7,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 import PostCard from "../components/PostCard";
 
 export default function HomePage() {
-  const { posts } = useGlobalContext();
+  const { posts, renderTags } = useGlobalContext();
 
   return (
     <>
@@ -29,6 +29,8 @@ export default function HomePage() {
                     image={post.image}
                     title={post.title}
                     description={post.description}
+                    tags={post.tags}
+                    renderTags={renderTags}
                   />
                 </Link>
               </div>

@@ -4,7 +4,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
 
-  const { posts } = useGlobalContext();
+  const { posts, renderTags } = useGlobalContext();
 
   if (!id) {
     return <p>ID non valido</p>;
@@ -12,55 +12,6 @@ export default function DetailsPage() {
 
   const numericId = parseInt(id, 10);
   const locationDetails = posts.find((post) => post.id === numericId);
-
-  const tagStyles: Record<string, { color: string; icon: string }> = {
-    "vita notturna": { color: "dark", icon: "🌃" },
-    città: { color: "primary", icon: "🏙️" },
-    natura: { color: "success", icon: "🌿" },
-    templi: { color: "warning", icon: "⛩️" },
-    spiritualità: { color: "info", icon: "🕊️" },
-    cibo: { color: "danger", icon: "🍜" },
-    divertimento: { color: "secondary", icon: "🎉" },
-    animali: { color: "success", icon: "🐾" },
-    relax: { color: "info", icon: "🛀" },
-    shopping: { color: "secondary", icon: "🛍️" },
-    cultura: { color: "secondary", icon: "📚" },
-    musei: { color: "primary", icon: "🏛️" },
-    mare: { color: "info", icon: "🌊" },
-    tecnologia: { color: "dark", icon: "💻" },
-    anime: { color: "warning", icon: "🎌" },
-    tradizione: { color: "danger", icon: "🏮" },
-    "parco a tema": { color: "success", icon: "🎢" },
-    famiglia: { color: "primary", icon: "👨‍👩‍👧‍👦" },
-    storia: { color: "secondary", icon: "📜" },
-    arte: { color: "danger", icon: "🎨" },
-    zen: { color: "success", icon: "🪷" },
-    giardini: { color: "success", icon: "🌸" },
-    kyoto: { color: "warning", icon: "🏯" },
-    bambù: { color: "success", icon: "🎋" },
-    riflessione: { color: "info", icon: "💭" },
-    panorama: { color: "primary", icon: "🌅" },
-    Osaka: { color: "danger", icon: "🌆" },
-    architettura: { color: "secondary", icon: "🏗️" },
-    tramonto: { color: "warning", icon: "🌇" },
-    "esperienza urbana": { color: "dark", icon: "🚶‍♂️" },
-    castelli: { color: "primary", icon: "🏰" },
-  };
-
-  function renderTags(tags: string[]) {
-    return tags.map((tag) => {
-      tag.trim().toLocaleLowerCase();
-      const { color, icon } = tagStyles[tag] || {
-        color: "secondary",
-        icon: "🏷️",
-      };
-      return (
-        <span key={tag} className={`badge text-bg-${color} me-2`}>
-          {icon} {tag}
-        </span>
-      );
-    });
-  }
 
   if (!locationDetails) {
     return <p>Post non trovato o dati non disponibili</p>;
