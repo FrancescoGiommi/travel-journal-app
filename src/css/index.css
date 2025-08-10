@@ -1,4 +1,32 @@
+body {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 400;
+}
+
+.card {
+  overflow: hidden; /* Per evitare che l'immagine "esca" */
+}
+
+.card img {
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: brightness(70%);
+}
+
+.card:hover img {
+  transform: scale(1.05);
+  filter: brightness(100%);
+}
+
 .post-img {
   object-fit: cover;
-  height: 200px;
+  height: 350px;
+}
+
+.card-text {
+  text-shadow: 1px 1px 2px black, 1px 1px 1em black, 1px 1px 1.2em blue;
+}
+
+.img-detail {
+  width: 100%;
+  border-radius: 20px;
 }
