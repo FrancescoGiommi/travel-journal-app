@@ -1,14 +1,12 @@
 type PostCardProps = {
   image: string;
   title: string;
-  description: string;
   renderTags: (tags: string[]) => React.ReactNode[];
   tags: string[];
 };
 
 export default function PostCard({
   image,
-  description,
   title,
   renderTags,
   tags,
@@ -22,7 +20,7 @@ export default function PostCard({
           alt={title}
         />
         <div className="card-img-overlay d-flex flex-column justify-content-between">
-          <p className="card-text">{description}</p>
+          <p className="card-text">{title}</p>
           <div>{renderTags(tags)}</div>
         </div>
       </div>
