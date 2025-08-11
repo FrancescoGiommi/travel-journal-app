@@ -21,9 +21,16 @@ export default function HomePage() {
 
   const [searchBar, setSearchBar] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [filteredHumor, setFilteredHumor] = useState("");
 
-  const filteredPosts = posts.filter((post) => {
-    return post.title.toLowerCase().includes(searchBar.toLocaleLowerCase());
+  const filterByTextAndHumor = posts.filter((post) => {
+    const matchesText = post.title
+      .toLowerCase()
+      .includes(searchBar.toLowerCase());
+    const matchesHumor =
+      !filteredHumor.trim() ||
+      post.humor.toLowerCase() === filteredHumor.toLowerCase();
+    return matchesText && matchesHumor;
   });
 
   const debouncedSearch = useMemo(
@@ -36,23 +43,42 @@ export default function HomePage() {
       <div className="container">
         <h1>Diario di viaggio</h1>
 
-        <div className="mb-5">
-          <form>
-            <input
-              className="form-control"
-              type="text"
-              placeholder="Cerca per testo.."
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-                debouncedSearch(e.target.value);
-              }}
-            />
-          </form>
+        <div className="d-flex mb-5">
+          <input
+            className="form-control"
+            type="text"
+            placeholder="Cerca per testo.."
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
+          />
+          <select
+            value={filteredHumor}
+            onChange={(e) => {
+              setFilteredHumor(e.target.value);
+            }}
+            className="form-select"
+            aria-label="Default select example"
+          >
+            <option value="">Cerca per stato d'animo</option>
+            <option value="Felice">😊 Felice</option>
+            <option value="Rilassato">😌 Rilassato</option>
+            <option value="Sorpreso">😲 Sorpreso</option>
+            <option value="Entusiasta">🤩 Entusiasta</option>
+            <option value="Eccitato">😃 Eccitato</option>
+            <option value="Affascinato">😍 Affascinato</option>
+            <option value="Riflessivo">🤔 Riflessivo</option>
+            <option value="Ammirato">👏 Ammirato</option>
+            <option value="Sereno">🌿 Sereno</option>
+            <option value="Impressionato">😮 Impressionato</option>
+            <option value="Curioso">🧐 Curioso</option>
+          </select>
         </div>
 
         <div className="row justify-content-center">
-          {filteredPosts.map((post) => (
+          {filterByTextAndHumor.map((post) => (
             <div
               key={post.id}
               className="col-12 col-sm-6 col-md-4 col-lg-6 mb-4"
