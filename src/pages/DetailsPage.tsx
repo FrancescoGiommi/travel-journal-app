@@ -4,7 +4,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
 
-  const { posts, renderTags } = useGlobalContext();
+  const { posts, renderTags, humorIcons } = useGlobalContext();
 
   if (!id) {
     return <p>ID non valido</p>;
@@ -50,7 +50,10 @@ export default function DetailsPage() {
             </div>
 
             <div className="d-flex align-items-center gap-5">
-              <p>Umore: {locationDetails.humor}</p>
+              <p>
+                Umore: {humorIcons[locationDetails.humor]}{" "}
+                {locationDetails.humor}
+              </p>
               <p>Impegno fisico: {locationDetails.physical_commitment}/5</p>
             </div>
             <div className="d-flex align-items-center">

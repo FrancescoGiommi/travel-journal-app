@@ -17,7 +17,7 @@ function debounce<T>(callback: (value: T) => void, delay: number) {
 }
 
 export default function HomePage() {
-  const { posts, renderTags } = useGlobalContext();
+  const { posts, renderTags, humorIcons } = useGlobalContext();
 
   const [searchBar, setSearchBar] = useState("");
   const [searchText, setSearchText] = useState("");
@@ -54,6 +54,7 @@ export default function HomePage() {
               debouncedSearch(e.target.value);
             }}
           />
+
           <select
             value={filteredHumor}
             onChange={(e) => {
@@ -63,17 +64,11 @@ export default function HomePage() {
             aria-label="Default select example"
           >
             <option value="">Cerca per stato d'animo</option>
-            <option value="Felice">😊 Felice</option>
-            <option value="Rilassato">😌 Rilassato</option>
-            <option value="Sorpreso">😲 Sorpreso</option>
-            <option value="Entusiasta">🤩 Entusiasta</option>
-            <option value="Eccitato">😃 Eccitato</option>
-            <option value="Affascinato">😍 Affascinato</option>
-            <option value="Riflessivo">🤔 Riflessivo</option>
-            <option value="Ammirato">👏 Ammirato</option>
-            <option value="Sereno">🌿 Sereno</option>
-            <option value="Impressionato">😮 Impressionato</option>
-            <option value="Curioso">🧐 Curioso</option>
+            {Object.entries(humorIcons).map(([key, icon]) => (
+              <option key={key} value={key}>
+                {icon} {key}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -93,6 +88,8 @@ export default function HomePage() {
                     title={post.title}
                     tags={post.tags}
                     renderTags={renderTags}
+                    humor={post.humor}
+                    humorIcons={humorIcons}
                   />
                 </Link>
               </div>

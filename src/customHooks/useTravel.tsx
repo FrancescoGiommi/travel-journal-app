@@ -79,8 +79,21 @@ export function useTravel() {
     Osaka: { color: "danger", icon: "🌆" },
     architettura: { color: "secondary", icon: "🏗️" },
     tramonto: { color: "warning", icon: "🌇" },
-    "esperienza urbana": { color: "dark", icon: "🚶‍♂️" },
     castelli: { color: "primary", icon: "🏰" },
+  };
+
+  const humorIcons: Record<string, string> = {
+    Felice: "😊",
+    Rilassato: "😌",
+    Sorpreso: "😲",
+    Entusiasta: "🤩",
+    Eccitato: "😃",
+    Affascinato: "😍",
+    Riflessivo: "🤔",
+    Ammirato: "👏",
+    Sereno: "🌿",
+    Impressionato: "😮",
+    Curioso: "🧐",
   };
 
   function renderTags(tags: string[]) {
@@ -98,5 +111,5 @@ export function useTravel() {
     });
   }
 
-  return { posts, renderTags };
+  return { posts, renderTags, humorIcons };
 }

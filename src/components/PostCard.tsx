@@ -3,6 +3,8 @@ type PostCardProps = {
   title: string;
   renderTags: (tags: string[]) => React.ReactNode[];
   tags: string[];
+  humor: string;
+  humorIcons: Record<string, string>;
 };
 
 export default function PostCard({
@@ -10,6 +12,8 @@ export default function PostCard({
   title,
   renderTags,
   tags,
+  humor,
+  humorIcons,
 }: PostCardProps) {
   return (
     <>
@@ -21,7 +25,14 @@ export default function PostCard({
         />
         <div className="card-img-overlay d-flex flex-column justify-content-between">
           <p className="card-text">{title}</p>
-          <div>{renderTags(tags)}</div>
+          <div className="d-flex justify-content-between">
+            <div>{renderTags(tags)}</div>
+            {humor && (
+              <div className="badge text-bg-primary">
+                {humorIcons[humor]} {humor}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -9,6 +9,7 @@ type GlobalContextProviderProps = {
 type GlobalContextType = {
   posts: TravelPost[];
   renderTags: (tags: string[]) => React.ReactNode[];
+  humorIcons: Record<string, string>;
 };
 
 const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -16,10 +17,10 @@ const GlobalContext = createContext<GlobalContextType | null>(null);
 export const GlobalContextProvider = ({
   children,
 }: GlobalContextProviderProps) => {
-  const { posts, renderTags } = useTravel();
+  const { posts, renderTags, humorIcons } = useTravel();
 
   return (
-    <GlobalContext.Provider value={{ posts, renderTags }}>
+    <GlobalContext.Provider value={{ posts, renderTags, humorIcons }}>
       {children}
     </GlobalContext.Provider>
   );
