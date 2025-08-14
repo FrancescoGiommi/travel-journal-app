@@ -23,8 +23,9 @@ export default function HomePage() {
   const [searchText, setSearchText] = useState("");
   const [filterHumor, setFilterHumor] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [sortOrderExpense, setSortOrderExpense] = useState("asc");
 
-  const filterByTextAndHumor = posts.filter((post) => {
+  const filterByTextAndHumorAndTags = posts.filter((post) => {
     const matchesText = post.title
       .toLowerCase()
       .includes(searchBar.toLowerCase());
@@ -60,12 +61,23 @@ export default function HomePage() {
     setSelectedTags((prevTag) => prevTag.filter((t) => t !== tag));
   };
 
+  // Lista finale dei giochi
+  const orderrderByExpense = useMemo(() => {
+    return filterByTextAndHumorAndTags.sort((a, b) => {
+      if (sortOrderExpense === "asc") {
+        return a.expense_euro - b.expense_euro;
+      } else {
+        return b.expense_euro - a.expense_euro;
+      }
+    });
+  }, [filterByTextAndHumorAndTags, sortOrderExpense]);
+
   return (
     <>
       <div className="container">
         <h1>Diario di viaggio</h1>
 
-        <div className="d-flex mb-5">
+        <div className="d-flex mb-2">
           {/* Input filtro per testo */}
           <input
             className="form-control"
@@ -114,6 +126,16 @@ export default function HomePage() {
           ))}
         </select>
 
+        {/* Bottone per cambiare ordine alfabetico */}
+        <button
+          className="btn btn-primary mb-2"
+          onClick={() =>
+            setSortOrderExpense((prev) => (prev === "asc" ? "desc" : "asc"))
+          }
+        >
+          Ordine per spesa: {sortOrderExpense === "asc" ? "A → Z" : "Z → A"}
+        </button>
+
         {/* Mostra i tags selezionati */}
         {selectedTags.map((tag) => (
           <span
@@ -126,7 +148,7 @@ export default function HomePage() {
         ))}
 
         <div className="row justify-content-center">
-          {filterByTextAndHumor.map((post) => (
+          {orderrderByExpense.map((post) => (
             <div
               key={post.id}
               className="col-12 col-sm-6 col-md-4 col-lg-6 mb-4"
