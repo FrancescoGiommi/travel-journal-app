@@ -50,7 +50,7 @@ export function useTravel() {
   }, []);
 
   const tagStyles: Record<string, { color: string; icon: string }> = {
-    "vita notturna": { color: "dark", icon: "🌃" },
+    nightlife: { color: "dark", icon: "🌃" },
     città: { color: "primary", icon: "🏙️" },
     natura: { color: "success", icon: "🌿" },
     templi: { color: "warning", icon: "⛩️" },
@@ -66,7 +66,7 @@ export function useTravel() {
     tecnologia: { color: "dark", icon: "💻" },
     anime: { color: "warning", icon: "🎌" },
     tradizione: { color: "danger", icon: "🏮" },
-    "parco a tema": { color: "success", icon: "🎢" },
+    ParcoDivertimenti: { color: "success", icon: "🎢" },
     famiglia: { color: "primary", icon: "👨‍👩‍👧‍👦" },
     storia: { color: "secondary", icon: "📜" },
     arte: { color: "danger", icon: "🎨" },
@@ -96,6 +96,39 @@ export function useTravel() {
     Curioso: "🧐",
   };
 
+  const tagsList: Record<string, string> = {
+    Nightlife: "🌃",
+    Città: "🏙️",
+    Natura: "🌿",
+    Templi: "⛩️",
+    Spiritualità: "🕊️",
+    Cibo: "🍜",
+    Divertimento: "🎉",
+    Animali: "🐾",
+    Relax: "🛀",
+    Shopping: "🛍️",
+    Cultura: "📚",
+    Musei: "🏛️",
+    Mare: "🌊",
+    Tecnologia: "💻",
+    Anime: "🎌",
+    Tradizione: "🏮",
+    ParcoDivertimenti: "🎢",
+    Famiglia: "👨‍👩‍👧‍👦",
+    Storia: "📜",
+    Arte: "🎨",
+    Zen: "🪷",
+    Giardini: "🌸",
+    Kyoto: "🏯",
+    Bambù: "🎋",
+    Riflessione: "💭",
+    Panorama: "🌅",
+    Osaka: "🌆",
+    Architettura: "🏗️",
+    Tramonto: "🌇",
+    Castelli: "🏰",
+  };
+
   function renderTags(tags: string[]) {
     return tags.map((tag) => {
       tag.trim().toLocaleLowerCase();
@@ -111,5 +144,5 @@ export function useTravel() {
     });
   }
 
-  return { posts, renderTags, humorIcons };
+  return { posts, renderTags, humorIcons, tagsList };
 }

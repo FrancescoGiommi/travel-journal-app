@@ -17,11 +17,12 @@ function debounce<T>(callback: (value: T) => void, delay: number) {
 }
 
 export default function HomePage() {
-  const { posts, renderTags, humorIcons } = useGlobalContext();
+  const { posts, renderTags, humorIcons, tagsList } = useGlobalContext();
 
   const [searchBar, setSearchBar] = useState("");
   const [searchText, setSearchText] = useState("");
   const [filteredHumor, setFilteredHumor] = useState("");
+  const [filteredTags, setFilteredTags] = useState("");
 
   const filterByTextAndHumor = posts.filter((post) => {
     const matchesText = post.title
@@ -30,7 +31,12 @@ export default function HomePage() {
     const matchesHumor =
       !filteredHumor.trim() ||
       post.humor.toLowerCase() === filteredHumor.toLowerCase();
-    return matchesText && matchesHumor;
+    const matchesTags = post.tags.some((tag) => {
+      return (
+        !filteredTags.trim() || tag.toLowerCase() === filteredTags.toLowerCase()
+      );
+    });
+    return matchesText && matchesHumor && matchesTags;
   });
 
   const debouncedSearch = useMemo(
@@ -44,6 +50,7 @@ export default function HomePage() {
         <h1>Diario di viaggio</h1>
 
         <div className="d-flex mb-5">
+          {/* Input filtro per testo */}
           <input
             className="form-control"
             type="text"
@@ -54,7 +61,7 @@ export default function HomePage() {
               debouncedSearch(e.target.value);
             }}
           />
-
+          {/* Select filtro per stato d'animo */}
           <select
             value={filteredHumor}
             onChange={(e) => {
@@ -67,6 +74,25 @@ export default function HomePage() {
             {Object.entries(humorIcons).map(([key, icon]) => (
               <option key={key} value={key}>
                 {icon} {key}
+              </option>
+            ))}
+          </select>
+
+          {/* Select filtro per tags */}
+          <select
+            value={filteredTags}
+            onChange={(e) => {
+              setFilteredTags(e.target.value);
+            }}
+            className="form-select"
+            aria-label="Default select example"
+          >
+            <option value="">Cerca per Tags</option>
+            {Object.entries(tagsList).map(([key, icon]) => (
+              <option key={key} value={key}>
+                {icon}
+
+                {key}
               </option>
             ))}
           </select>
