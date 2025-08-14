@@ -21,21 +21,25 @@ export default function HomePage() {
 
   const [searchBar, setSearchBar] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [filteredHumor, setFilteredHumor] = useState("");
-  const [filteredTags, setFilteredTags] = useState("");
+  const [filterHumor, setFilterHumor] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const filterByTextAndHumor = posts.filter((post) => {
     const matchesText = post.title
       .toLowerCase()
       .includes(searchBar.toLowerCase());
     const matchesHumor =
-      !filteredHumor.trim() ||
-      post.humor.toLowerCase() === filteredHumor.toLowerCase();
-    const matchesTags = post.tags.some((tag) => {
-      return (
-        !filteredTags.trim() || tag.toLowerCase() === filteredTags.toLowerCase()
-      );
-    });
+      !filterHumor.trim() ||
+      post.humor.toLowerCase() === filterHumor.toLowerCase();
+
+    const matchesTags = selectedTags.length
+      ? selectedTags.every((tag) =>
+          post.tags.some(
+            (postTag) => postTag.toLowerCase() === tag.toLowerCase()
+          )
+        )
+      : true;
+
     return matchesText && matchesHumor && matchesTags;
   });
 
@@ -43,6 +47,18 @@ export default function HomePage() {
     () => debounce<string>((value) => setSearchBar(value), 300),
     []
   );
+
+  // Funzione per aggiungere un tag
+  const addTag = (tag: string) => {
+    if (!selectedTags.includes(tag)) {
+      setSelectedTags((prevTag) => [...prevTag, tag]);
+    }
+  };
+
+  // Funzione per rimuovere un tag
+  const removeTag = (tag: string) => {
+    setSelectedTags((prevTag) => prevTag.filter((t) => t !== tag));
+  };
 
   return (
     <>
@@ -63,9 +79,9 @@ export default function HomePage() {
           />
           {/* Select filtro per stato d'animo */}
           <select
-            value={filteredHumor}
+            value={filterHumor}
             onChange={(e) => {
-              setFilteredHumor(e.target.value);
+              setFilterHumor(e.target.value);
             }}
             className="form-select"
             aria-label="Default select example"
@@ -77,26 +93,37 @@ export default function HomePage() {
               </option>
             ))}
           </select>
-
-          {/* Select filtro per tags */}
-          <select
-            value={filteredTags}
-            onChange={(e) => {
-              setFilteredTags(e.target.value);
-            }}
-            className="form-select"
-            aria-label="Default select example"
-          >
-            <option value="">Cerca per Tags</option>
-            {Object.entries(tagsList).map(([key, icon]) => (
-              <option key={key} value={key}>
-                {icon}
-
-                {key}
-              </option>
-            ))}
-          </select>
         </div>
+
+        {/* Select filtro per tags */}
+        <select
+          value=""
+          onChange={(e) => {
+            addTag(e.target.value);
+          }}
+          className="form-select mb-2"
+          aria-label="Default select example"
+        >
+          <option value="">Cerca per Tags</option>
+          {Object.entries(tagsList).map(([key, icon]) => (
+            <option key={key} value={key}>
+              {icon}
+
+              {key}
+            </option>
+          ))}
+        </select>
+
+        {/* Mostra i tags selezionati */}
+        {selectedTags.map((tag) => (
+          <span
+            key={tag}
+            className="btn btn-primary me-2 mt-2 mb-2"
+            onClick={() => removeTag(tag)}
+          >
+            {tagsList[tag]} {tag} <span className="ms-1">x</span>
+          </span>
+        ))}
 
         <div className="row justify-content-center">
           {filterByTextAndHumor.map((post) => (
