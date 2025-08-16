@@ -62,7 +62,7 @@ export default function HomePage() {
     setSelectedTags((prevTag) => prevTag.filter((t) => t !== tag));
   };
 
-  // Lista finale dei giochi
+  // Ordinamento per prezzo e data
   const orderByExpense = useMemo(() => {
     return filterByTextAndHumorAndTags.sort((a, b) => {
       if (sortOrderExpense === "asc") {
@@ -128,19 +128,36 @@ export default function HomePage() {
             ))}
           </select>
         </div>
-        {/* Bottone per cambiare ordine alfabetico */}
+
+        {/* Bottone per cambiare ordine in base al prezzo */}
         <div>
           <button
-            className="btn btn-primary mb-2"
+            className="btn btn-primary mb-2 me-2"
             onClick={() =>
               setSortOrderExpense((prev) => (prev === "asc" ? "desc" : "asc"))
             }
           >
-            Ordine per <span className="badge text-bg-success">€</span>{" "}
-            <span className="badge text-bg-warning">€€</span>{" "}
-            <span className="badge text-bg-danger">€€€</span>
+            Ordina per Prezzo:{" "}
+            {sortOrderExpense === "asc" ? (
+              <>
+                <span className="badge text-bg-success">€</span>
+                {" → "}
+                <span className="badge text-bg-warning">€€</span>
+                {" → "}
+                <span className="badge text-bg-danger">€€€</span>
+              </>
+            ) : (
+              <>
+                <span className="badge text-bg-danger">€€€</span>
+                {" → "}
+                <span className="badge text-bg-warning">€€</span>
+                {" → "}
+                <span className="badge text-bg-success">€</span>
+              </>
+            )}
           </button>
         </div>
+
         {/* Mostra i tags selezionati */}
         {selectedTags.map((tag) => (
           <span
