@@ -62,7 +62,7 @@ export default function HomePage() {
   };
 
   // Lista finale dei giochi
-  const orderrderByExpense = useMemo(() => {
+  const orderByExpense = useMemo(() => {
     return filterByTextAndHumorAndTags.sort((a, b) => {
       if (sortOrderExpense === "asc") {
         return a.expense_euro - b.expense_euro;
@@ -72,6 +72,16 @@ export default function HomePage() {
     });
   }, [filterByTextAndHumorAndTags, sortOrderExpense]);
 
+  // Funzione per colorare i tag in base al costo
+  const expenceTagsColor = (expence: number) => {
+    if (expence <= 20) {
+      return <p className="badge text-bg-success">{expence} €</p>;
+    } else if (expence <= 60) {
+      return <p className="badge text-bg-warning">{expence} €</p>;
+    } else {
+      return <p className="badge text-bg-danger">{expence} €</p>;
+    }
+  };
   return (
     <>
       <div className="container">
@@ -107,35 +117,39 @@ export default function HomePage() {
           </select>
         </div>
 
-        {/* Select filtro per tags */}
-        <select
-          value=""
-          onChange={(e) => {
-            addTag(e.target.value);
-          }}
-          className="form-select mb-2"
-          aria-label="Default select example"
-        >
-          <option value="">Cerca per Tags</option>
-          {Object.entries(tagsList).map(([key, icon]) => (
-            <option key={key} value={key}>
-              {icon}
+        <div className="d-flex justify-content-between">
+          {/* Select filtro per tags */}
+          <select
+            value=""
+            onChange={(e) => {
+              addTag(e.target.value);
+            }}
+            className="form-select mb-2"
+            aria-label="Default select example"
+          >
+            <option value="">Cerca per Tags</option>
+            {Object.entries(tagsList).map(([key, icon]) => (
+              <option key={key} value={key}>
+                {icon}
 
-              {key}
-            </option>
-          ))}
-        </select>
-
+                {key}
+              </option>
+            ))}
+          </select>
+        </div>
         {/* Bottone per cambiare ordine alfabetico */}
-        <button
-          className="btn btn-primary mb-2"
-          onClick={() =>
-            setSortOrderExpense((prev) => (prev === "asc" ? "desc" : "asc"))
-          }
-        >
-          Ordine per spesa: {sortOrderExpense === "asc" ? "A → Z" : "Z → A"}
-        </button>
-
+        <div>
+          <button
+            className="btn btn-primary mb-2"
+            onClick={() =>
+              setSortOrderExpense((prev) => (prev === "asc" ? "desc" : "asc"))
+            }
+          >
+            Ordine per <span className="badge text-bg-success">€</span>{" "}
+            <span className="badge text-bg-warning">€€</span>{" "}
+            <span className="badge text-bg-danger">€€€</span>
+          </button>
+        </div>
         {/* Mostra i tags selezionati */}
         {selectedTags.map((tag) => (
           <span
@@ -148,7 +162,7 @@ export default function HomePage() {
         ))}
 
         <div className="row justify-content-center">
-          {orderrderByExpense.map((post) => (
+          {orderByExpense.map((post) => (
             <div
               key={post.id}
               className="col-12 col-sm-6 col-md-4 col-lg-6 mb-4"
@@ -165,6 +179,8 @@ export default function HomePage() {
                     renderTags={renderTags}
                     humor={post.humor}
                     humorIcons={humorIcons}
+                    expense_euro={post.expense_euro}
+                    expenceTagsColor={expenceTagsColor}
                   />
                 </Link>
               </div>
