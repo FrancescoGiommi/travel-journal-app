@@ -4,7 +4,8 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
 
-  const { posts, renderTags, humorIcons } = useGlobalContext();
+  const { posts, renderTags, humorIcons, expenceTagsColor } =
+    useGlobalContext();
 
   if (!id) {
     return <p>ID non valido</p>;
@@ -46,14 +47,16 @@ export default function DetailsPage() {
 
             <div className="d-flex align-items-center gap-5">
               <p>Effort economico: {locationDetails.economic_effort}/5</p>
-              <p>Costo: {locationDetails.expense_euro} €</p>
+              <p>Costo: {expenceTagsColor(locationDetails.expense_euro)}</p>
             </div>
 
             <div className="d-flex align-items-center gap-5">
-              <p>
-                Umore: {humorIcons[locationDetails.humor]}{" "}
-                {locationDetails.humor}
-              </p>
+              <div className="d-flex">
+                <p className="me-2">Umore:</p>
+                <p className="badge text-bg-primary">
+                  {humorIcons[locationDetails.humor]} {locationDetails.humor}
+                </p>
+              </div>
               <p>Impegno fisico: {locationDetails.physical_commitment}/5</p>
             </div>
             <div className="d-flex align-items-center">

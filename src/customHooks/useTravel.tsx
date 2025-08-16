@@ -144,5 +144,16 @@ export function useTravel() {
     });
   }
 
-  return { posts, renderTags, humorIcons, tagsList };
+  // Funzione per colorare i tag in base al costo
+  const expenceTagsColor = (expence: number) => {
+    if (expence <= 20) {
+      return <span className="badge text-bg-success">{expence} €</span>;
+    } else if (expence <= 60) {
+      return <span className="badge text-bg-warning">{expence} €</span>;
+    } else {
+      return <span className="badge text-bg-danger">{expence} €</span>;
+    }
+  };
+
+  return { posts, renderTags, humorIcons, tagsList, expenceTagsColor };
 }

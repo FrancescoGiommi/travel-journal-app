@@ -32,7 +32,7 @@ export default function PostCard({
         <div className="card-img-overlay d-flex flex-column justify-content-between">
           <div className="d-flex justify-content-between">
             <p className="card-text">{title}</p>
-            <p>{expenceTagsColor(expense_euro)}</p>
+            <span>{expenceTagsColor(expense_euro)}</span>
           </div>
           <div className="d-flex justify-content-between">
             <div>{renderTags(tags)}</div>

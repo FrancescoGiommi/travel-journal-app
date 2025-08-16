@@ -17,7 +17,8 @@ function debounce<T>(callback: (value: T) => void, delay: number) {
 }
 
 export default function HomePage() {
-  const { posts, renderTags, humorIcons, tagsList } = useGlobalContext();
+  const { posts, renderTags, humorIcons, tagsList, expenceTagsColor } =
+    useGlobalContext();
 
   const [searchBar, setSearchBar] = useState("");
   const [searchText, setSearchText] = useState("");
@@ -72,16 +73,6 @@ export default function HomePage() {
     });
   }, [filterByTextAndHumorAndTags, sortOrderExpense]);
 
-  // Funzione per colorare i tag in base al costo
-  const expenceTagsColor = (expence: number) => {
-    if (expence <= 20) {
-      return <p className="badge text-bg-success">{expence} €</p>;
-    } else if (expence <= 60) {
-      return <p className="badge text-bg-warning">{expence} €</p>;
-    } else {
-      return <p className="badge text-bg-danger">{expence} €</p>;
-    }
-  };
   return (
     <>
       <div className="container">
