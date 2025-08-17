@@ -30,11 +30,10 @@ export default function DetailsPage() {
               alt={locationDetails.title}
             />
           </div>
-          <div className="text-start form-control mt-5">
+          <div className="text-start glass-box mt-5">
             <h2>{locationDetails.title}</h2>
             <div className="d-flex align-items-center gap-5">
               <p>Luogo: {locationDetails.location}</p>
-
               <p>Data: {locationDetails.date}</p>
             </div>
 
@@ -59,6 +58,7 @@ export default function DetailsPage() {
               </div>
               <p>Impegno fisico: {locationDetails.physical_commitment}/5</p>
             </div>
+
             <div className="d-flex align-items-center">
               <p>Tags: {renderTags(locationDetails.tags)}</p>
             </div>

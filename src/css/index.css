@@ -2,6 +2,7 @@ body {
   font-family: "Noto Sans JP", sans-serif;
   font-weight: 400;
   background-image: url("https://4kwallpapers.com/images/wallpapers/tokyo-tower-japan-metal-structure-cityscape-city-lights-3840x2160-3672.jpg") !important;
+  min-height: 100vh;
   background-size: cover !important;
 
   background-repeat: no-repeat !important;
@@ -34,4 +35,14 @@ body {
 .img-detail {
   width: 100%;
   border-radius: 20px;
+}
+
+.glass-box {
+  background: rgba(255, 255, 255, 0.2); /* semi trasparente */
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px); /* sfocatura dietro */
+  -webkit-backdrop-filter: blur(10px); /* supporto Safari */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* bordo leggero */
+  color: white; /* testo più leggibile */
 }
