@@ -35,11 +35,11 @@ export default function PostCard({
             <span>{expenceTagsColor(expense_euro)}</span>
           </div>
           <div className="d-flex justify-content-between">
-            <div>{renderTags(tags)}</div>
+            <span>{renderTags(tags)}</span>
             {humor && (
-              <div className="badge text-bg-primary">
+              <span className="badge text-bg-primary">
                 {humorIcons[humor]} {humor}
-              </div>
+              </span>
             )}
           </div>
         </div>

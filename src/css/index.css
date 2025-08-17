@@ -1,6 +1,11 @@
 body {
   font-family: "Noto Sans JP", sans-serif;
   font-weight: 400;
+  background-image: url("https://4kwallpapers.com/images/wallpapers/tokyo-tower-japan-metal-structure-cityscape-city-lights-3840x2160-3672.jpg") !important;
+  background-size: cover !important;
+
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
 }
 
 .card {
@@ -19,7 +24,7 @@ body {
 
 .post-img {
   object-fit: cover;
-  height: 350px;
+  height: 250px;
 }
 
 .card-text {

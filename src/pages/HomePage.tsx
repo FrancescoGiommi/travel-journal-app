@@ -62,7 +62,7 @@ export default function HomePage() {
     setSelectedTags((prevTag) => prevTag.filter((t) => t !== tag));
   };
 
-  // Ordinamento per prezzo e data
+  // Ordinamento per prezzo
   const orderByExpense = useMemo(() => {
     return filterByTextAndHumorAndTags.sort((a, b) => {
       if (sortOrderExpense === "asc") {
@@ -75,10 +75,9 @@ export default function HomePage() {
 
   return (
     <>
+      <h1 className="ms-5 mt-5">Diario di viaggio</h1>
       <div className="container">
-        <h1>Diario di viaggio</h1>
-
-        <div className="d-flex mb-2">
+        <div className="d-flex justify-content-around mb-2">
           {/* Input filtro per testo */}
           <input
             className="form-control"
@@ -173,7 +172,7 @@ export default function HomePage() {
           {orderByExpense.map((post) => (
             <div
               key={post.id}
-              className="col-12 col-sm-6 col-md-4 col-lg-6 mb-4"
+              className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
             >
               <div className="card h-100">
                 <Link
