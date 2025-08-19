@@ -14,4 +14,5 @@ export type TravelPost = {
   economic_effort: number;
   expense_euro: number;
   tags: string[];
+  new_image?: string[] | null;
 };

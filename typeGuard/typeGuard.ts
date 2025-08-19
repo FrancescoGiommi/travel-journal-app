@@ -35,8 +35,11 @@ function isTravelPost(dati: unknown): dati is TravelPost {
       typeof obj.expense_euro === "number" &&
       "tags" in obj &&
       Array.isArray(obj.tags) &&
-      obj.tags.every((tag) => typeof tag === "string");
-
+      obj.tags.every((tag) => typeof tag === "string") &&
+      (!("new_image" in obj) ||
+        obj.new_image == null ||
+        (Array.isArray(obj.new_image) &&
+          obj.new_image.every((image) => typeof image === "string")));
     return isValid;
   }
   return false;

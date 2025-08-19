@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { supabase } from "../../supabase/supabaseClient";
 import { isTravelPost } from "../../typeGuard/typeGuard";
 import type { TravelPost } from "../../types";
 
@@ -8,35 +8,25 @@ export function useTravel() {
 
   async function fetchPosts(): Promise<TravelPost[] | null> {
     try {
-      const response = await fetch(
-        "https://pdorueopvdnmydujmqzg.supabase.co/rest/v1/japan_travel_posts",
-        {
-          headers: {
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const { data, error } = await supabase
+        .from("japan_travel_posts")
+        .select("*");
 
-      if (!response.ok) {
-        throw new Error(
-          `Errore HTTP ${response.status} ${response.statusText}`
-        );
+      if (error) {
+        throw error;
       }
 
-      const dati: unknown = await response.json();
-
-      if (!Array.isArray(dati)) {
-        throw new Error("Formato dei dati non valido: atteso un array");
+      if (!data) {
+        return null;
       }
 
-      const validPosts = dati.filter(isTravelPost);
+      // Type guard come prima
+      const validPosts = data.filter(isTravelPost);
 
       console.log(validPosts);
       return validPosts;
     } catch (error) {
-      console.error("Errore nella fetch:", error);
+      console.error("Errore nella fetch con supabase:", error);
       return null;
     }
   }
@@ -75,8 +65,6 @@ export function useTravel() {
     bambù: { color: "success", icon: "🎋" },
     panorama: { color: "primary", icon: "🌅" },
     Osaka: { color: "danger", icon: "🌆" },
-    architettura: { color: "secondary", icon: "🏗️" },
-    tramonto: { color: "warning", icon: "🌇" },
     castelli: { color: "primary", icon: "🏰" },
   };
 
@@ -120,8 +108,6 @@ export function useTravel() {
     bambù: "🎋",
     panorama: "🌅",
     osaka: "🌆",
-    architettura: "🏗️",
-    tramonto: "🌇",
     castelli: "🏰",
   };
 
