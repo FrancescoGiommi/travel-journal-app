@@ -78,6 +78,9 @@ export default function AddPostPage() {
           setNegativeReflection("");
           setTagsInput("");
           setTags([]);
+
+          // Torna alla home dopo il salvataggio
+          navigate("/");
         }
       });
   };
@@ -131,7 +134,7 @@ export default function AddPostPage() {
 
             {/* Data */}
             <input
-              type="text"
+              type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="form-control"
