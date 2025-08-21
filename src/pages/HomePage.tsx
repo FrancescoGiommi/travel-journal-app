@@ -1,5 +1,3 @@
-import { supabase } from "../../supabase/supabaseClient";
-
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
@@ -75,7 +73,7 @@ export default function HomePage() {
 
   return (
     <>
-      <h1 className="ms-5 mt-5">Diario di viaggio</h1>
+      <h1 className="ms-5 pt-5">Diario di viaggio</h1>
       <div className="container">
         <div className="d-flex justify-content-around mb-2">
           {/* Input filtro per testo */}
@@ -129,7 +127,7 @@ export default function HomePage() {
         </div>
 
         {/* Bottone per cambiare ordine in base al prezzo */}
-        <div>
+        <div className="d-flex justify-content-between">
           <button
             className="btn btn-primary mb-2 me-2"
             onClick={() =>
@@ -155,6 +153,10 @@ export default function HomePage() {
               </>
             )}
           </button>
+          {/* Bottone per aggiungere un post */}
+          <Link to={"/addPost"}>
+            <button className="btn btn-primary mb-2">Aggiungi post</button>
+          </Link>
         </div>
 
         {/* Mostra i tags selezionati */}

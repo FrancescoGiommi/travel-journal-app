@@ -5,6 +5,7 @@ import { GlobalContextProvider } from "./context/GlobalContext";
 
 import HomePage from "./pages/HomePage";
 import DetailsPage from "./pages/DetailsPage";
+import AddPostPage from "./pages/AddPostPage";
 function App() {
   return (
     <>
@@ -13,6 +14,7 @@ function App() {
           <Routes>
             <Route element={<HomePage />} path="/" />
             <Route element={<DetailsPage />} path="/details/:id" />
+            <Route element={<AddPostPage />} path="/addPost" />
           </Routes>
         </BrowserRouter>
       </GlobalContextProvider>

@@ -25,7 +25,7 @@ export default function DetailsPage() {
         <div className="text-center">
           <div>
             {/* Carosello */}
-            <div id="carouselExample" className="carousel slide">
+            {/* <div id="carouselExample" className="carousel slide">
               <div className="carousel-inner">
                 {locationDetails.new_image &&
                 locationDetails.new_image.length > 0 ? (
@@ -60,14 +60,14 @@ export default function DetailsPage() {
                 ></span>
                 <span className="visually-hidden">Next</span>
               </button>
-            </div>
+            </div> */}
             {/* Carosello */}
 
-            {/* <img
+            <img
               className="img-detail"
               src={locationDetails.image}
               alt={locationDetails.title}
-            /> */}
+            />
           </div>
           <div className="text-start glass-box mt-5">
             <h2>{locationDetails.title}</h2>
