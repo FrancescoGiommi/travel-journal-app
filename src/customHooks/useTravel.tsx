@@ -11,7 +11,7 @@ export function useTravel() {
       const { data, error } = await supabase
         .from("japan_travel_posts")
         .select("*");
-
+      console.log("Tutti i post da supabase:", data);
       if (error) {
         throw error;
       }
@@ -23,7 +23,6 @@ export function useTravel() {
       // Type guard come prima
       const validPosts = data.filter(isTravelPost);
 
-      console.log(validPosts);
       return validPosts;
     } catch (error) {
       console.error("Errore nella fetch con supabase:", error);
@@ -127,7 +126,11 @@ export function useTravel() {
   }
 
   // Funzione per colorare i tag in base al costo
-  const expenceTagsColor = (expence: number) => {
+  const expenceTagsColor = (expence: number | null) => {
+    if (expence === null) {
+      return <span className="badge text-bg-secondary">N/D</span>;
+    }
+
     if (expence <= 20) {
       return <span className="badge text-bg-success">{expence} €</span>;
     } else if (expence <= 60) {
@@ -137,5 +140,12 @@ export function useTravel() {
     }
   };
 
-  return { posts, renderTags, humorIcons, tagsList, expenceTagsColor };
+  return {
+    posts,
+    renderTags,
+    humorIcons,
+    tagsList,
+    expenceTagsColor,
+    fetchPosts,
+  };
 }

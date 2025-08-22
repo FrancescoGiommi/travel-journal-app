@@ -14,9 +14,9 @@ function isTravelPost(dati: unknown): dati is TravelPost {
       "location" in obj &&
       typeof obj.location === "string" &&
       "latitude" in obj &&
-      typeof obj.latitude === "number" &&
+      (typeof obj.latitude === "number" || obj.latitude === null) &&
       "longitude" in obj &&
-      typeof obj.longitude === "number" &&
+      (typeof obj.longitude === "number" || obj.longitude === null) &&
       "image" in obj &&
       typeof obj.image === "string" &&
       "description" in obj &&
@@ -28,11 +28,13 @@ function isTravelPost(dati: unknown): dati is TravelPost {
       "negative_reflection" in obj &&
       typeof obj.negative_reflection === "string" &&
       "physical_commitment" in obj &&
-      typeof obj.physical_commitment === "number" &&
+      (typeof obj.physical_commitment === "number" ||
+        obj.physical_commitment === null) &&
       "economic_effort" in obj &&
-      typeof obj.economic_effort === "number" &&
+      (typeof obj.economic_effort === "number" ||
+        obj.economic_effort === null) &&
       "expense_euro" in obj &&
-      typeof obj.expense_euro === "number" &&
+      (typeof obj.expense_euro === "number" || obj.expense_euro === null) &&
       "tags" in obj &&
       Array.isArray(obj.tags) &&
       obj.tags.every((tag) => typeof tag === "string") &&

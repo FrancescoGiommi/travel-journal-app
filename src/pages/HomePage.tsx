@@ -63,6 +63,10 @@ export default function HomePage() {
   // Ordinamento per prezzo
   const orderByExpense = useMemo(() => {
     return filterByTextAndHumorAndTags.sort((a, b) => {
+      if (a.expense_euro == null && b.expense_euro == null) return 0;
+      if (a.expense_euro == null) return 1;
+      if (b.expense_euro == null) return -1;
+
       if (sortOrderExpense === "asc") {
         return a.expense_euro - b.expense_euro;
       } else {

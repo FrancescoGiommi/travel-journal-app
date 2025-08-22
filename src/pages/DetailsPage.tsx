@@ -24,45 +24,6 @@ export default function DetailsPage() {
       <div className="container">
         <div className="text-center">
           <div>
-            {/* Carosello */}
-            {/* <div id="carouselExample" className="carousel slide">
-              <div className="carousel-inner">
-                {locationDetails.new_image &&
-                locationDetails.new_image.length > 0 ? (
-                  locationDetails.new_image.map((img, i) => (
-                    <img key={i} src={img} alt={`foto ${i}`} />
-                  ))
-                ) : (
-                  <img src={locationDetails.image} alt="foto principale" />
-                )}
-              </div>
-              <button
-                className="carousel-control-prev"
-                type="button"
-                data-bs-target="#carouselExample"
-                data-bs-slide="prev"
-              >
-                <span
-                  className="carousel-control-prev-icon"
-                  aria-hidden="true"
-                ></span>
-                <span className="visually-hidden">Previous</span>
-              </button>
-              <button
-                className="carousel-control-next"
-                type="button"
-                data-bs-target="#carouselExample"
-                data-bs-slide="next"
-              >
-                <span
-                  className="carousel-control-next-icon"
-                  aria-hidden="true"
-                ></span>
-                <span className="visually-hidden">Next</span>
-              </button>
-            </div> */}
-            {/* Carosello */}
-
             <img
               className="img-detail"
               src={locationDetails.image}
@@ -85,7 +46,9 @@ export default function DetailsPage() {
 
             <div className="d-flex align-items-center gap-5">
               <p>Effort economico: {locationDetails.economic_effort}/5</p>
-              <p>Costo: {expenceTagsColor(locationDetails.expense_euro)}</p>
+              <p>
+                Costo: {expenceTagsColor(locationDetails.expense_euro ?? 0)}
+              </p>
             </div>
 
             <div className="d-flex align-items-center gap-5">

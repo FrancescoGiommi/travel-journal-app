@@ -7,7 +7,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function AddPostPage() {
   const navigate = useNavigate();
 
-  const { humorIcons } = useGlobalContext();
+  const { humorIcons, fetchPosts } = useGlobalContext();
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
@@ -40,12 +40,19 @@ export default function AddPostPage() {
     return `${year}-${month}-${day}`;
   };
 
+  // Funzione per ottenere l'URL dell'immagine
+  const getImageUrl = (fileName: string): string => {
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const bucket = "travel_images";
+    return `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${fileName}`;
+  };
+
   const handleSave = () => {
     const newPost: NewTravelPost = {
       title,
       location,
       description,
-      image,
+      image: getImageUrl(image),
       date: formatDate(date),
       expense_euro: Number(expenseEuro),
       economic_effort: Number(economicEffort),
@@ -64,6 +71,8 @@ export default function AddPostPage() {
           console.error("Errore nel salvataggio:", error.message);
         } else {
           console.log("Nuovo post salvato!");
+
+          fetchPosts();
           // Reset dei campi dopo il salvataggio
           setTitle("");
           setLocation("");
