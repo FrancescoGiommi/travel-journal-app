@@ -77,9 +77,11 @@ export default function HomePage() {
 
   return (
     <>
-      <h1 className="ms-5 pt-5">Diario di viaggio</h1>
+      <h1 className="ms-5 pt-5 pb-3 text-light text-center">
+        Diario di viaggio
+      </h1>
       <div className="container">
-        <div className="d-flex justify-content-around mb-2">
+        <div className="d-flex justify-content-around mb-2 gap-3">
           {/* Input filtro per testo */}
           <input
             className="form-control"

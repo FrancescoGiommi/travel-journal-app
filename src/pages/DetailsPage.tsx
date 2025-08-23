@@ -1,7 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
+import { supabase } from "../../supabase/supabaseClient";
+import DeletePostModal from "../components/DeletePostModal";
 
 export default function DetailsPage() {
+  const navigate = useNavigate();
+
+  const { fetchPosts } = useGlobalContext();
   const { id } = useParams<{ id: string }>();
 
   const { posts, renderTags, humorIcons, expenceTagsColor } =
@@ -18,9 +24,27 @@ export default function DetailsPage() {
     return <p>Post non trovato o dati non disponibili</p>;
   }
 
+  // Funzione per eliminare un post
+  const handleDelete = async () => {
+    const { error } = await supabase
+      .from("japan_travel_posts")
+      .delete()
+      .eq("id", numericId);
+
+    if (error) {
+      console.error("Errore durante l'eliminazione:", error.message);
+      return;
+    }
+
+    // rifaccio la query per ottenere la lista aggiornata dal db
+    await fetchPosts();
+
+    navigate("/");
+  };
+
   return (
     <>
-      <h1 className="ms-5 mt-5">Pagina di dettaglio</h1>
+      <h1 className="ms-5 mt-5 text-light mb-5">Pagina di dettaglio</h1>
       <div className="container">
         <div className="text-center">
           <div>
@@ -30,8 +54,18 @@ export default function DetailsPage() {
               alt={locationDetails.title}
             />
           </div>
-          <div className="text-start glass-box mt-5">
-            <h2>{locationDetails.title}</h2>
+          <div className="text-start glass-box mt-5 mb-5">
+            <div className="d-flex justify-content-between">
+              <h2>{locationDetails.title}</h2>
+              <button
+                type="button"
+                className="btn btn-danger rounded-3"
+                data-bs-toggle="modal"
+                data-bs-target="#deletePostModal"
+              >
+                Elimina
+              </button>
+            </div>
             <div className="d-flex align-items-center gap-5">
               <p>Luogo: {locationDetails.location}</p>
               <p>Data: {locationDetails.date}</p>
@@ -67,6 +101,12 @@ export default function DetailsPage() {
           </div>
         </div>
       </div>
+
+      <DeletePostModal
+        postId={numericId}
+        onConfirm={handleDelete}
+        title={locationDetails.title}
+      />
     </>
   );
 }

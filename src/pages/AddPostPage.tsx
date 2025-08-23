@@ -99,166 +99,168 @@ export default function AddPostPage() {
   return (
     <>
       <div className="container pt-5">
-        <h1 className="mb-5">Aggiungi post</h1>
-        <form action="">
-          <div className="d-flex gap-3">
-            {/* Titolo */}
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="form-control mb-3"
-              id="title"
-              placeholder="Inseirisci il titolo"
-              required
-            />
+        <h1 className="mb-5 text-light">Aggiungi post</h1>
+        <div className="glass-box">
+          <form action="">
+            <div className="d-flex gap-3">
+              {/* Titolo */}
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="form-control mb-3"
+                id="title"
+                placeholder="Inseirisci il titolo"
+                required
+              />
 
-            {/* Luogo */}
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="form-control mb-3"
-              id="location"
-              placeholder="Inserisci il Luogo"
-              required
-            />
-          </div>
-          {/* Descrizione */}
-          <div className="mb-3">
-            <textarea
-              className="form-control"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              id="description"
-              placeholder="Inserisci una descrizione"
-              required
-            ></textarea>
-          </div>
-          <div className="d-flex gap-3 mb-3">
-            {/* Immagine */}
-            <input
-              type="text"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              className="form-control"
-              id="image"
-              placeholder="Inserisci l'URL dell'immagine"
-              required
-            />
+              {/* Luogo */}
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="form-control mb-3"
+                id="location"
+                placeholder="Inserisci il Luogo"
+                required
+              />
+            </div>
+            {/* Descrizione */}
+            <div className="mb-3">
+              <textarea
+                className="form-control"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                id="description"
+                placeholder="Inserisci una descrizione"
+                required
+              ></textarea>
+            </div>
+            <div className="d-flex gap-3 mb-3">
+              {/* Immagine */}
+              <input
+                type="text"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                className="form-control"
+                id="image"
+                placeholder="Inserisci l'URL dell'immagine"
+                required
+              />
 
-            {/* Data */}
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="form-control"
-              id="date"
-              placeholder="Inserisci la data"
-              required
-            />
-          </div>
-          {/* Spesa in euro */}
-          <div className="mb-3">
-            <input
-              type="number"
-              value={expenseEuro}
-              onChange={(e) => setExpenseEuro(Number(e.target.value))}
-              className="form-control"
-              id="expense_euro"
-              placeholder="Inserisci la spesa"
-              required
-            />
-          </div>
-          <div className="d-flex gap-3 mb-3">
-            {/* Effort economico */}
+              {/* Data */}
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="form-control"
+                id="date"
+                placeholder="Inserisci la data"
+                required
+              />
+            </div>
+            {/* Spesa in euro */}
+            <div className="mb-3">
+              <input
+                type="number"
+                value={expenseEuro}
+                onChange={(e) => setExpenseEuro(Number(e.target.value))}
+                className="form-control"
+                id="expense_euro"
+                placeholder="Inserisci la spesa"
+                required
+              />
+            </div>
+            <div className="d-flex gap-3 mb-3">
+              {/* Effort economico */}
 
-            <select
-              className="form-select"
-              aria-label="Default select example"
-              value={economicEffort}
-              onChange={(e) => setEconomicEffort(Number(e.target.value))}
-            >
-              <option value="">Seleziona effort economico</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="3">4</option>
-              <option value="3">5</option>
-            </select>
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                value={economicEffort}
+                onChange={(e) => setEconomicEffort(Number(e.target.value))}
+              >
+                <option value="">Seleziona effort economico</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="3">4</option>
+                <option value="3">5</option>
+              </select>
 
-            {/* Impegno fisico */}
+              {/* Impegno fisico */}
 
-            <select
-              className="form-select form-control"
-              aria-label="Default select example"
-              value={physicalCommitment}
-              onChange={(e) => setPhysicalCommitment(Number(e.target.value))}
-            >
-              <option value="">Seleziona impegno fisico</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="3">4</option>
-              <option value="3">5</option>
-            </select>
-          </div>
-          {/* Stato d'animo */}
-          <div className="mb-3">
-            <select
-              className="form-select"
-              aria-label="Default select example"
-              value={humor}
-              onChange={(e) => setHumor(e.target.value)}
-            >
-              <option value="">Seleziona stato d'animo</option>
-              {Object.entries(humorIcons).map(([key, icon]) => (
-                <option key={key} value={key}>
-                  {icon} {key}
-                </option>
-              ))}
-            </select>
-          </div>
-          {/* Riflessione positiva */}
-          <div className="mb-3">
-            <textarea
-              className="form-control"
-              id="positive_reflection"
-              value={positiveReflection}
-              onChange={(e) => setPositiveReflection(e.target.value)}
-              placeholder="Inserisci una riflessione positiva"
-              required
-            ></textarea>
-          </div>
-          {/* Riflessione negativa */}
-          <div className="mb-3">
-            <textarea
-              className="form-control"
-              id="negative_reflection"
-              value={negativeReflection}
-              onChange={(e) => setNegativeReflection(e.target.value)}
-              placeholder="Inserisci una riflessione negativa"
-              required
-            ></textarea>
-          </div>
-          {/* Tags */}
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Inserisci fino a 3 tags separati da virgola"
-              value={tagsInput}
-              onChange={(e) => handleTagsChange(e.target.value)}
-              required
-            />
-            <small className="text-muted">
-              Tags attuali: {tags.join(", ")}
-            </small>
-          </div>
-        </form>
-        <button className="btn btn-success" onClick={handleSave}>
-          Salva post
-        </button>
+              <select
+                className="form-select form-control"
+                aria-label="Default select example"
+                value={physicalCommitment}
+                onChange={(e) => setPhysicalCommitment(Number(e.target.value))}
+              >
+                <option value="">Seleziona impegno fisico</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="3">4</option>
+                <option value="3">5</option>
+              </select>
+            </div>
+            {/* Stato d'animo */}
+            <div className="mb-3">
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                value={humor}
+                onChange={(e) => setHumor(e.target.value)}
+              >
+                <option value="">Seleziona stato d'animo</option>
+                {Object.entries(humorIcons).map(([key, icon]) => (
+                  <option key={key} value={key}>
+                    {icon} {key}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Riflessione positiva */}
+            <div className="mb-3">
+              <textarea
+                className="form-control"
+                id="positive_reflection"
+                value={positiveReflection}
+                onChange={(e) => setPositiveReflection(e.target.value)}
+                placeholder="Inserisci una riflessione positiva"
+                required
+              ></textarea>
+            </div>
+            {/* Riflessione negativa */}
+            <div className="mb-3">
+              <textarea
+                className="form-control"
+                id="negative_reflection"
+                value={negativeReflection}
+                onChange={(e) => setNegativeReflection(e.target.value)}
+                placeholder="Inserisci una riflessione negativa"
+                required
+              ></textarea>
+            </div>
+            {/* Tags */}
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control mb-2"
+                placeholder="Inserisci fino a 3 tags separati da virgola"
+                value={tagsInput}
+                onChange={(e) => handleTagsChange(e.target.value)}
+                required
+              />
+              <span className="text-light">
+                Tags attuali: {tags.join(", ")}
+              </span>
+            </div>
+          </form>
+          <button className="btn btn-success" onClick={handleSave}>
+            Salva post
+          </button>
+        </div>
       </div>
     </>
   );
