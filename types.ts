@@ -15,7 +15,6 @@ export type TravelPost = {
   economic_effort: number | null;
   expense_euro: number | null;
   tags: string[];
-  new_image?: string[] | null;
 };
 
 // per i nuovi post che arrivano dal form

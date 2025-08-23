@@ -47,7 +47,7 @@ export default function AddPostPage() {
     return `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${fileName}`;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const newPost: NewTravelPost = {
       title,
       location,
@@ -61,37 +61,39 @@ export default function AddPostPage() {
       positive_reflection: positiveReflection,
       negative_reflection: negativeReflection,
       tags,
-      new_image: null,
     };
-    supabase
+
+    const { error } = await supabase
       .from("japan_travel_posts")
-      .insert([newPost])
-      .then(({ error }) => {
-        if (error) {
-          console.error("Errore nel salvataggio:", error.message);
-        } else {
-          console.log("Nuovo post salvato!");
+      .insert([newPost]);
 
-          fetchPosts();
-          // Reset dei campi dopo il salvataggio
-          setTitle("");
-          setLocation("");
-          setDescription("");
-          setImage("");
-          setDate("");
-          setExpenseEuro("");
-          setEconomicEffort("");
-          setPhysicalCommitment("");
-          setHumor("");
-          setPositiveReflection("");
-          setNegativeReflection("");
-          setTagsInput("");
-          setTags([]);
+    if (error) {
+      console.error("Errore nel salvataggio:", error.message);
+      return;
+    }
 
-          // Torna alla home dopo il salvataggio
-          navigate("/");
-        }
-      });
+    console.log("Nuovo post salvato!");
+
+    // Aggiorna i post nella home
+    await fetchPosts();
+
+    // reset campi
+    setTitle("");
+    setLocation("");
+    setDescription("");
+    setImage("");
+    setDate("");
+    setExpenseEuro("");
+    setEconomicEffort("");
+    setPhysicalCommitment("");
+    setHumor("");
+    setPositiveReflection("");
+    setNegativeReflection("");
+    setTagsInput("");
+    setTags([]);
+
+    // vai in home
+    navigate("/");
   };
 
   return (
@@ -108,6 +110,7 @@ export default function AddPostPage() {
               className="form-control mb-3"
               id="title"
               placeholder="Inseirisci il titolo"
+              required
             />
 
             {/* Luogo */}
@@ -118,6 +121,7 @@ export default function AddPostPage() {
               className="form-control mb-3"
               id="location"
               placeholder="Inserisci il Luogo"
+              required
             />
           </div>
           {/* Descrizione */}
@@ -128,6 +132,7 @@ export default function AddPostPage() {
               onChange={(e) => setDescription(e.target.value)}
               id="description"
               placeholder="Inserisci una descrizione"
+              required
             ></textarea>
           </div>
           <div className="d-flex gap-3 mb-3">
@@ -139,6 +144,7 @@ export default function AddPostPage() {
               className="form-control"
               id="image"
               placeholder="Inserisci l'URL dell'immagine"
+              required
             />
 
             {/* Data */}
@@ -149,6 +155,7 @@ export default function AddPostPage() {
               className="form-control"
               id="date"
               placeholder="Inserisci la data"
+              required
             />
           </div>
           {/* Spesa in euro */}
@@ -160,6 +167,7 @@ export default function AddPostPage() {
               className="form-control"
               id="expense_euro"
               placeholder="Inserisci la spesa"
+              required
             />
           </div>
           <div className="d-flex gap-3 mb-3">
@@ -219,6 +227,7 @@ export default function AddPostPage() {
               value={positiveReflection}
               onChange={(e) => setPositiveReflection(e.target.value)}
               placeholder="Inserisci una riflessione positiva"
+              required
             ></textarea>
           </div>
           {/* Riflessione negativa */}
@@ -229,6 +238,7 @@ export default function AddPostPage() {
               value={negativeReflection}
               onChange={(e) => setNegativeReflection(e.target.value)}
               placeholder="Inserisci una riflessione negativa"
+              required
             ></textarea>
           </div>
           {/* Tags */}
@@ -239,6 +249,7 @@ export default function AddPostPage() {
               placeholder="Inserisci fino a 3 tags separati da virgola"
               value={tagsInput}
               onChange={(e) => handleTagsChange(e.target.value)}
+              required
             />
             <small className="text-muted">
               Tags attuali: {tags.join(", ")}

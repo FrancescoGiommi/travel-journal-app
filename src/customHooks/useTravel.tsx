@@ -11,21 +11,13 @@ export function useTravel() {
       const { data, error } = await supabase
         .from("japan_travel_posts")
         .select("*");
-      console.log("Tutti i post da supabase:", data);
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      if (!data) {
-        return null;
-      }
-
-      // Type guard come prima
-      const validPosts = data.filter(isTravelPost);
-
+      const validPosts = (data ?? []).filter(isTravelPost);
+      setPosts(validPosts);
       return validPosts;
-    } catch (error) {
-      console.error("Errore nella fetch con supabase:", error);
+    } catch (err) {
+      console.error("Errore nella fetch:", err);
       return null;
     }
   }
