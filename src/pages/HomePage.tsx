@@ -23,7 +23,11 @@ export default function HomePage() {
   const [filterHumor, setFilterHumor] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showSearchMenu, setShowSearchMenu] = useState(false);
-  const [sortOrderExpense, setSortOrderExpense] = useState("asc");
+  const [sortOrderExpense, setSortOrderExpense] = useState<"asc" | "desc">(
+    "asc"
+  );
+  const [sortOrderDate, setSortOrderDate] = useState<"asc" | "desc">("asc");
+  const [sortBy, setSortBy] = useState<"expense" | "date" | null>(null);
 
   const filterByTextAndHumorAndTags = posts.filter((post) => {
     const matchesText = post.title
@@ -61,20 +65,26 @@ export default function HomePage() {
     setSelectedTags((prevTag) => prevTag.filter((t) => t !== tag));
   };
 
-  // Ordinamento per prezzo
-  const orderByExpense = useMemo(() => {
-    return filterByTextAndHumorAndTags.sort((a, b) => {
-      if (a.expense_euro == null && b.expense_euro == null) return 0;
-      if (a.expense_euro == null) return 1;
-      if (b.expense_euro == null) return -1;
-
-      if (sortOrderExpense === "asc") {
-        return a.expense_euro - b.expense_euro;
-      } else {
-        return b.expense_euro - a.expense_euro;
+  // Ordinamento per prezzo e data
+  const orderedPosts = useMemo(() => {
+    return [...filterByTextAndHumorAndTags].sort((a, b) => {
+      if (sortBy === "expense") {
+        const expenceA = a.expense_euro ?? 0;
+        const expenceB = b.expense_euro ?? 0;
+        return sortOrderExpense === "asc"
+          ? expenceA - expenceB
+          : expenceB - expenceA;
       }
+
+      if (sortBy === "date") {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return sortOrderDate === "asc" ? dateA - dateB : dateB - dateA;
+      }
+
+      return 0;
     });
-  }, [filterByTextAndHumorAndTags, sortOrderExpense]);
+  }, [filterByTextAndHumorAndTags, sortBy, sortOrderExpense, sortOrderDate]);
 
   return (
     <>
@@ -84,12 +94,18 @@ export default function HomePage() {
       <div className="container">
         <div className="d-flex justify-content-between mb-2">
           <h2 className="text-light">Viaggio in Giappone</h2>
-          <button
-            className="btn btn-primary rounded-3"
-            onClick={() => setShowSearchMenu(!showSearchMenu)}
-          >
-            {showSearchMenu ? "Nascondi ricerca" : "Cerca un luogo"}
-          </button>
+          {/* Bottone per aggiungere un post */}
+          <div className="d-flex flex-column">
+            <Link to={"/addPost"}>
+              <button className="btn btn-primary mb-2">Aggiungi post</button>
+            </Link>
+            <button
+              className="btn btn-primary rounded-3"
+              onClick={() => setShowSearchMenu(!showSearchMenu)}
+            >
+              {showSearchMenu ? "Nascondi ricerca" : "Cerca/ordina post"}
+            </button>
+          </div>
         </div>
         {showSearchMenu && (
           <>
@@ -142,41 +158,51 @@ export default function HomePage() {
                 ))}
               </select>
             </div>
+
+            {/* Bottone per cambiare ordine in base al prezzo */}
+            <div className="d-flex justify-content- around mb-2">
+              <button
+                className="btn btn-primary me-2"
+                onClick={() => {
+                  setSortBy("expense");
+                  setSortOrderExpense((prev) =>
+                    prev === "asc" ? "desc" : "asc"
+                  );
+                }}
+              >
+                Ordina per Prezzo:{" "}
+                {sortOrderExpense === "asc" ? (
+                  <>
+                    <span className="badge text-bg-success">€</span>
+                    {" → "}
+                    <span className="badge text-bg-warning">€€</span>
+                    {" → "}
+                    <span className="badge text-bg-danger">€€€</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="badge text-bg-danger">€€€</span>
+                    {" → "}
+                    <span className="badge text-bg-warning">€€</span>
+                    {" → "}
+                    <span className="badge text-bg-success">€</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  setSortBy("date");
+                  setSortOrderDate((prev) => (prev === "asc" ? "desc" : "asc"));
+                }}
+              >
+                Ordina per Data:{" "}
+                {sortOrderDate === "asc" ? "Meno recente" : "Più recente"}
+              </button>
+            </div>
           </>
         )}
-
-        {/* Bottone per cambiare ordine in base al prezzo */}
-        <div className="d-flex justify-content-between">
-          <button
-            className="btn btn-primary mb-2 me-2"
-            onClick={() =>
-              setSortOrderExpense((prev) => (prev === "asc" ? "desc" : "asc"))
-            }
-          >
-            Ordina per Prezzo:{" "}
-            {sortOrderExpense === "asc" ? (
-              <>
-                <span className="badge text-bg-success">€</span>
-                {" → "}
-                <span className="badge text-bg-warning">€€</span>
-                {" → "}
-                <span className="badge text-bg-danger">€€€</span>
-              </>
-            ) : (
-              <>
-                <span className="badge text-bg-danger">€€€</span>
-                {" → "}
-                <span className="badge text-bg-warning">€€</span>
-                {" → "}
-                <span className="badge text-bg-success">€</span>
-              </>
-            )}
-          </button>
-          {/* Bottone per aggiungere un post */}
-          <Link to={"/addPost"}>
-            <button className="btn btn-primary mb-2">Aggiungi post</button>
-          </Link>
-        </div>
 
         {/* Mostra i tags selezionati */}
         {selectedTags.map((tag) => (
@@ -190,7 +216,7 @@ export default function HomePage() {
         ))}
 
         <div className="row justify-content-center">
-          {orderByExpense.map((post) => (
+          {orderedPosts.map((post) => (
             <div
               key={post.id}
               className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
