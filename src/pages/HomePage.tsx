@@ -22,6 +22,7 @@ export default function HomePage() {
   const [searchText, setSearchText] = useState("");
   const [filterHumor, setFilterHumor] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showSearchMenu, setShowSearchMenu] = useState(false);
   const [sortOrderExpense, setSortOrderExpense] = useState("asc");
 
   const filterByTextAndHumorAndTags = posts.filter((post) => {
@@ -81,56 +82,68 @@ export default function HomePage() {
         Diario di viaggio
       </h1>
       <div className="container">
-        <div className="d-flex justify-content-around mb-2 gap-3">
-          {/* Input filtro per testo */}
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Cerca per testo.."
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              debouncedSearch(e.target.value);
-            }}
-          />
-          {/* Select filtro per stato d'animo */}
-          <select
-            value={filterHumor}
-            onChange={(e) => {
-              setFilterHumor(e.target.value);
-            }}
-            className="form-select"
-            aria-label="Default select example"
+        <div className="d-flex justify-content-between mb-2">
+          <h2 className="text-light">Viaggio in Giappone</h2>
+          <button
+            className="btn btn-primary rounded-3"
+            onClick={() => setShowSearchMenu(!showSearchMenu)}
           >
-            <option value="">Cerca per stato d'animo</option>
-            {Object.entries(humorIcons).map(([key, icon]) => (
-              <option key={key} value={key}>
-                {icon} {key}
-              </option>
-            ))}
-          </select>
+            {showSearchMenu ? "Nascondi ricerca" : "Cerca un luogo"}
+          </button>
         </div>
+        {showSearchMenu && (
+          <>
+            <div className="d-flex justify-content-around mb-2 gap-3">
+              {/* Input filtro per testo */}
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Cerca per testo.."
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                  debouncedSearch(e.target.value);
+                }}
+              />
+              {/* Select filtro per stato d'animo */}
+              <select
+                value={filterHumor}
+                onChange={(e) => {
+                  setFilterHumor(e.target.value);
+                }}
+                className="form-select"
+                aria-label="Default select example"
+              >
+                <option value="">Cerca per stato d'animo</option>
+                {Object.entries(humorIcons).map(([key, icon]) => (
+                  <option key={key} value={key}>
+                    {icon} {key}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="d-flex justify-content-between">
+              {/* Select filtro per tags */}
+              <select
+                value=""
+                onChange={(e) => {
+                  addTag(e.target.value);
+                }}
+                className="form-select mb-2"
+                aria-label="Default select example"
+              >
+                <option value="">Cerca per Tags</option>
+                {Object.entries(tagsList).map(([key, icon]) => (
+                  <option key={key} value={key}>
+                    {icon}
 
-        <div className="d-flex justify-content-between">
-          {/* Select filtro per tags */}
-          <select
-            value=""
-            onChange={(e) => {
-              addTag(e.target.value);
-            }}
-            className="form-select mb-2"
-            aria-label="Default select example"
-          >
-            <option value="">Cerca per Tags</option>
-            {Object.entries(tagsList).map(([key, icon]) => (
-              <option key={key} value={key}>
-                {icon}
-
-                {key}
-              </option>
-            ))}
-          </select>
-        </div>
+                    {key}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
 
         {/* Bottone per cambiare ordine in base al prezzo */}
         <div className="d-flex justify-content-between">
