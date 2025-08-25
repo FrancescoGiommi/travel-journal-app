@@ -110,53 +110,63 @@ export default function HomePage() {
         {showSearchMenu && (
           <>
             <div className="d-flex justify-content-around mb-2 gap-3">
-              {/* Input filtro per testo */}
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Cerca per testo.."
-                value={searchText}
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-              />
-              {/* Select filtro per stato d'animo */}
-              <select
-                value={filterHumor}
-                onChange={(e) => {
-                  setFilterHumor(e.target.value);
-                }}
-                className="form-select"
-                aria-label="Default select example"
-              >
-                <option value="">Cerca per stato d'animo</option>
-                {Object.entries(humorIcons).map(([key, icon]) => (
-                  <option key={key} value={key}>
-                    {icon} {key}
-                  </option>
-                ))}
-              </select>
+              <div className="d-flex flex-column w-100">
+                <span className="text-light mb-1">Filtra per testo</span>
+                {/* Input filtro per testo */}
+                <input
+                  className="form-control text-bg-dark"
+                  type="text"
+                  value={searchText}
+                  onChange={(e) => {
+                    setSearchText(e.target.value);
+                    debouncedSearch(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="d-flex flex-column w-100">
+                <span className="text-light mb-1">
+                  Filtra per stato d'animo
+                </span>
+                {/* Select filtro per stato d'animo */}
+                <select
+                  value={filterHumor}
+                  onChange={(e) => {
+                    setFilterHumor(e.target.value);
+                  }}
+                  className="form-select text-bg-dark"
+                  aria-label="Default select example"
+                >
+                  <option value="">Seleziona un opzione</option>
+                  {Object.entries(humorIcons).map(([key, icon]) => (
+                    <option key={key} value={key}>
+                      {icon} {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="d-flex justify-content-between">
-              {/* Select filtro per tags */}
-              <select
-                value=""
-                onChange={(e) => {
-                  addTag(e.target.value);
-                }}
-                className="form-select mb-2"
-                aria-label="Default select example"
-              >
-                <option value="">Cerca per Tags</option>
-                {Object.entries(tagsList).map(([key, icon]) => (
-                  <option key={key} value={key}>
-                    {icon}
+              <div className="d-flex flex-column w-100">
+                <span className="text-light mb-1">Filtra per Tags</span>
+                {/* Select filtro per tags */}
+                <select
+                  value=""
+                  onChange={(e) => {
+                    addTag(e.target.value);
+                  }}
+                  className="form-select text-bg-dark mb-2"
+                  aria-label="Default select example"
+                >
+                  <option value="">Seleziona tag</option>
+                  {Object.entries(tagsList).map(([key, icon]) => (
+                    <option key={key} value={key}>
+                      {icon}
 
-                    {key}
-                  </option>
-                ))}
-              </select>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Bottone per cambiare ordine in base al prezzo */}

@@ -103,116 +103,140 @@ export default function AddPostPage() {
         <div className="glass-box">
           <form action="">
             <div className="d-flex gap-3">
-              {/* Titolo */}
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="form-control mb-3"
-                id="title"
-                placeholder="Inseirisci il titolo"
-                required
-              />
-
-              {/* Luogo */}
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="form-control mb-3"
-                id="location"
-                placeholder="Inserisci il Luogo"
-                required
-              />
+              <div className="d-flex flex-column w-100">
+                <span className="text-light mb-1">Inseirisci il titolo</span>
+                {/* Titolo */}
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="form-control text-bg-dark mb-3"
+                  id="title"
+                  required
+                />
+              </div>
+              <div className="d-flex flex-column w-100">
+                {/* Luogo */}
+                <span className="text-light mb-1">Inserisci il Luogo</span>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="form-control text-bg-dark mb-3"
+                  id="location"
+                  placeholder="Inserisci il Luogo"
+                  required
+                />
+              </div>
             </div>
-            {/* Descrizione */}
-            <div className="mb-3">
+
+            <div className="d-flex flex-column w-100 mb-3">
+              {/* Descrizione */}
+              <span className="text-light mb-1">Inserisci una descrizione</span>
               <textarea
-                className="form-control"
+                className="form-control text-bg-dark"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 id="description"
-                placeholder="Inserisci una descrizione"
                 required
               ></textarea>
             </div>
             <div className="d-flex gap-3 mb-3">
-              {/* Immagine */}
-              <input
-                type="text"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className="form-control"
-                id="image"
-                placeholder="Inserisci l'URL dell'immagine"
-                required
-              />
-
-              {/* Data */}
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="form-control"
-                id="date"
-                placeholder="Inserisci la data"
-                required
-              />
+              <div className="d-flex flex-column w-100">
+                {/* Immagine */}
+                <span className="text-light mb-1">
+                  Inserisci il nome dell'immagine
+                </span>
+                <input
+                  type="text"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  className="form-control text-bg-dark"
+                  id="image"
+                  required
+                />
+              </div>
+              <div className="d-flex flex-column w-100">
+                {/* Data */}
+                <span className="text-light mb-1">Inserisci la data</span>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="form-control text-bg-dark"
+                  id="date"
+                  required
+                />
+              </div>
             </div>
-            {/* Spesa in euro */}
-            <div className="mb-3">
+
+            <div className="d-flex flex-column w-100 mb-3">
+              {/* Spesa in euro */}
+              <span className="text-light mb-1">Inserisci l'importo speso</span>
               <input
                 type="number"
                 value={expenceEuro}
                 onChange={(e) => setExpenseEuro(Number(e.target.value))}
-                className="form-control"
+                className="form-control text-bg-dark"
                 id="expense_euro"
-                placeholder="Inserisci la spesa"
                 required
               />
             </div>
             <div className="d-flex gap-3 mb-3">
-              {/* Effort economico */}
+              <div className="d-flex flex-column w-100">
+                {/* Effort economico */}
+                <span className="text-light mb-1">
+                  Seleziona effort economico
+                </span>
 
-              <select
-                className="form-select"
-                aria-label="Default select example"
-                value={economicEffort}
-                onChange={(e) => setEconomicEffort(Number(e.target.value))}
-              >
-                <option value="">Seleziona effort economico</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
+                <select
+                  className="form-select text-bg-dark"
+                  aria-label="Default select example"
+                  value={economicEffort}
+                  onChange={(e) => setEconomicEffort(Number(e.target.value))}
+                >
+                  <option value="">Seleziona un opzione</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div className="d-flex flex-column w-100">
+                {/* Impegno fisico */}
+                <span className="text-light mb-1">
+                  Seleziona impegno fisico
+                </span>
 
-              {/* Impegno fisico */}
-
-              <select
-                className="form-select form-control"
-                aria-label="Default select example"
-                value={physicalCommitment}
-                onChange={(e) => setPhysicalCommitment(Number(e.target.value))}
-              >
-                <option value="">Seleziona impegno fisico</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
+                <select
+                  className="form-select text-bg-dark form-control"
+                  aria-label="Default select example"
+                  value={physicalCommitment}
+                  onChange={(e) =>
+                    setPhysicalCommitment(Number(e.target.value))
+                  }
+                >
+                  <option value="">Seleziona un opzione</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
             </div>
-            {/* Stato d'animo */}
-            <div className="mb-3">
+
+            <div className="d-flex flex-column w-100 mb-3">
+              {/* Stato d'animo */}
+              <span className="text-light mb-1">Seleziona stato d'animo</span>
               <select
-                className="form-select"
+                className="form-select text-bg-dark"
                 aria-label="Default select example"
                 value={humor}
                 onChange={(e) => setHumor(e.target.value)}
               >
-                <option value="">Seleziona stato d'animo</option>
+                <option value="">Seleziona un opzione</option>
                 {Object.entries(humorIcons).map(([key, icon]) => (
                   <option key={key} value={key}>
                     {icon} {key}
@@ -220,34 +244,42 @@ export default function AddPostPage() {
                 ))}
               </select>
             </div>
-            {/* Riflessione positiva */}
-            <div className="mb-3">
+
+            <div className="d-flex flex-column w-100 mb-3">
+              {/* Riflessione positiva */}
+              <span className="text-light mb-1">
+                Inserisci una riflessione positiva
+              </span>
               <textarea
-                className="form-control"
+                className="form-control text-bg-dark"
                 id="positive_reflection"
                 value={positiveReflection}
                 onChange={(e) => setPositiveReflection(e.target.value)}
-                placeholder="Inserisci una riflessione positiva"
                 required
               ></textarea>
             </div>
-            {/* Riflessione negativa */}
-            <div className="mb-3">
+
+            <div className="d-flex flex-column w-100 mb-3">
+              {/* Riflessione negativa */}
+              <span className="text-light mb-1">
+                Inserisci una riflessione negativa
+              </span>
               <textarea
-                className="form-control"
+                className="form-control text-bg-dark"
                 id="negative_reflection"
                 value={negativeReflection}
                 onChange={(e) => setNegativeReflection(e.target.value)}
-                placeholder="Inserisci una riflessione negativa"
                 required
               ></textarea>
             </div>
             {/* Tags */}
-            <div className="mb-3">
+            <div className="d-flex flex-column w-100 mb-3">
+              <span className="text-light mb-1">
+                Inserisci fino a 3 tags separati da virgola
+              </span>
               <input
                 type="text"
-                className="form-control mb-2"
-                placeholder="Inserisci fino a 3 tags separati da virgola"
+                className="form-control text-bg-dark mb-2"
                 value={tagsInput}
                 onChange={(e) => handleTagsChange(e.target.value)}
                 required

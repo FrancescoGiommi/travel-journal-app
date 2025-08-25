@@ -43,8 +43,8 @@ export default function DetailsPage() {
 
   return (
     <>
-      <h1 className="ms-5 mt-5 text-light mb-5">Pagina di dettaglio</h1>
       <div className="container">
+        <h1 className="mt-5 text-light mb-5">Pagina di dettaglio</h1>
         <div className="text-center">
           <div>
             <img
