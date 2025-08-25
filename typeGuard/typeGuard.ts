@@ -33,8 +33,8 @@ function isTravelPost(dati: unknown): dati is TravelPost {
       "economic_effort" in obj &&
       (typeof obj.economic_effort === "number" ||
         obj.economic_effort === null) &&
-      "expense_euro" in obj &&
-      (typeof obj.expense_euro === "number" || obj.expense_euro === null) &&
+      "expence_euro" in obj &&
+      (typeof obj.expence_euro === "number" || obj.expence_euro === null) &&
       "tags" in obj &&
       Array.isArray(obj.tags) &&
       obj.tags.every((tag) => typeof tag === "string");

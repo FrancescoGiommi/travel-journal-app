@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 import { supabase } from "../../supabase/supabaseClient";
@@ -81,7 +80,7 @@ export default function DetailsPage() {
             <div className="d-flex align-items-center gap-5">
               <p>Effort economico: {locationDetails.economic_effort}/5</p>
               <p>
-                Costo: {expenceTagsColor(locationDetails.expense_euro ?? 0)}
+                Costo: {expenceTagsColor(locationDetails.expence_euro ?? 0)}
               </p>
             </div>
 

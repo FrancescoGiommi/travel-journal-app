@@ -13,7 +13,7 @@ export type TravelPost = {
   negative_reflection: string;
   physical_commitment: number | null;
   economic_effort: number | null;
-  expense_euro: number | null;
+  expence_euro: number | null;
   tags: string[];
 };
 

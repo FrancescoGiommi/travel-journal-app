@@ -27,7 +27,7 @@ export default function HomePage() {
     "asc"
   );
   const [sortOrderDate, setSortOrderDate] = useState<"asc" | "desc">("asc");
-  const [sortBy, setSortBy] = useState<"expense" | "date" | null>(null);
+  const [sortBy, setSortBy] = useState<"expence" | "date" | null>(null);
 
   const filterByTextAndHumorAndTags = posts.filter((post) => {
     const matchesText = post.title
@@ -68,9 +68,9 @@ export default function HomePage() {
   // Ordinamento per prezzo e data
   const orderedPosts = useMemo(() => {
     return [...filterByTextAndHumorAndTags].sort((a, b) => {
-      if (sortBy === "expense") {
-        const expenceA = a.expense_euro ?? 0;
-        const expenceB = b.expense_euro ?? 0;
+      if (sortBy === "expence") {
+        const expenceA = a.expence_euro ?? 0;
+        const expenceB = b.expence_euro ?? 0;
         return sortOrderExpense === "asc"
           ? expenceA - expenceB
           : expenceB - expenceA;
@@ -164,7 +164,7 @@ export default function HomePage() {
               <button
                 className="btn btn-primary me-2"
                 onClick={() => {
-                  setSortBy("expense");
+                  setSortBy("expence");
                   setSortOrderExpense((prev) =>
                     prev === "asc" ? "desc" : "asc"
                   );
@@ -233,7 +233,7 @@ export default function HomePage() {
                     renderTags={renderTags}
                     humor={post.humor}
                     humorIcons={humorIcons}
-                    expense_euro={post.expense_euro}
+                    expence_euro={post.expence_euro}
                     expenceTagsColor={expenceTagsColor}
                   />
                 </Link>

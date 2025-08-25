@@ -12,7 +12,7 @@ type GlobalContextType = {
   renderTags: (tags: string[]) => React.ReactNode[];
   humorIcons: Record<string, string>;
   tagsList: Record<string, string>;
-  expenceTagsColor: (expense: number | null) => React.ReactNode;
+  expenceTagsColor: (expence: number | null) => React.ReactNode;
 };
 
 const GlobalContext = createContext<GlobalContextType | null>(null);

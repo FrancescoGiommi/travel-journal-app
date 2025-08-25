@@ -13,7 +13,7 @@ export default function AddPostPage() {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [date, setDate] = useState("");
-  const [expenseEuro, setExpenseEuro] = useState<number | "">("");
+  const [expenceEuro, setExpenseEuro] = useState<number | "">("");
   const [economicEffort, setEconomicEffort] = useState<number | "">("");
   const [physicalCommitment, setPhysicalCommitment] = useState<number | "">("");
   const [humor, setHumor] = useState("");
@@ -35,7 +35,7 @@ export default function AddPostPage() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // mesi da 0 a 11
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
@@ -54,7 +54,7 @@ export default function AddPostPage() {
       description,
       image: getImageUrl(image),
       date: formatDate(date),
-      expense_euro: Number(expenseEuro),
+      expence_euro: Number(expenceEuro),
       economic_effort: Number(economicEffort),
       physical_commitment: Number(physicalCommitment),
       humor,
@@ -163,7 +163,7 @@ export default function AddPostPage() {
             <div className="mb-3">
               <input
                 type="number"
-                value={expenseEuro}
+                value={expenceEuro}
                 onChange={(e) => setExpenseEuro(Number(e.target.value))}
                 className="form-control"
                 id="expense_euro"

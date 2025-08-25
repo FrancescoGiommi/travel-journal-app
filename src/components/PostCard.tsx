@@ -5,7 +5,7 @@ type PostCardProps = {
   tags: string[];
   humor: string;
   humorIcons: Record<string, string>;
-  expense_euro: number | null;
+  expence_euro: number | null;
   expenceTagsColor: (expense: number | null) => React.ReactNode;
 };
 
@@ -16,7 +16,7 @@ export default function PostCard({
   tags,
   humor,
   humorIcons,
-  expense_euro,
+  expence_euro,
   expenceTagsColor = (expence: number | null) => (
     <p className="badge text-bg-secondary">
       {expence !== null ? `${expence} €` : "N/D"}
@@ -29,7 +29,7 @@ export default function PostCard({
       <div className="card-img-overlay d-flex flex-column justify-content-between">
         <div className="d-flex justify-content-between">
           <p className="card-text">{title}</p>
-          <span>{expenceTagsColor(expense_euro)}</span>
+          <span>{expenceTagsColor(expence_euro)}</span>
         </div>
         <div className="d-flex justify-content-between">
           <span>{renderTags(tags)}</span>
