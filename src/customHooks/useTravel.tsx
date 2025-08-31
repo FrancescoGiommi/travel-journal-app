@@ -6,6 +6,7 @@ import type { TravelPost } from "../../types";
 export function useTravel() {
   const [posts, setPosts] = useState<TravelPost[]>([]);
 
+  // Funzione per ottenere la lista dei post
   async function fetchPosts(): Promise<TravelPost[] | null> {
     try {
       const { data, error } = await supabase
@@ -14,6 +15,7 @@ export function useTravel() {
       if (error) throw error;
 
       const validPosts = (data ?? []).filter(isTravelPost);
+
       setPosts(validPosts);
       return validPosts;
     } catch (err) {
@@ -22,6 +24,7 @@ export function useTravel() {
     }
   }
 
+  // Faccio la fetch al caricamento del componente
   useEffect(() => {
     fetchPosts().then((posts) => {
       if (posts) {
@@ -30,78 +33,16 @@ export function useTravel() {
     });
   }, []);
 
-  const tagStyles: Record<string, { color: string; icon: string }> = {
-    nightlife: { color: "dark", icon: "🌃" },
-    città: { color: "primary", icon: "🏙️" },
-    natura: { color: "success", icon: "🌿" },
-    templi: { color: "warning", icon: "⛩️" },
-    spiritualità: { color: "info", icon: "🕊️" },
-    cibo: { color: "danger", icon: "🍜" },
-    divertimento: { color: "secondary", icon: "🎉" },
-    animali: { color: "success", icon: "🐾" },
-    relax: { color: "info", icon: "🛀" },
-    shopping: { color: "secondary", icon: "🛍️" },
-    cultura: { color: "secondary", icon: "📚" },
-    musei: { color: "primary", icon: "🏛️" },
-    mare: { color: "info", icon: "🌊" },
-    tecnologia: { color: "dark", icon: "💻" },
-    anime: { color: "warning", icon: "🎌" },
-    tradizione: { color: "danger", icon: "🏮" },
-    ParcoDivertimenti: { color: "success", icon: "🎢" },
-    storia: { color: "secondary", icon: "📜" },
-    arte: { color: "danger", icon: "🎨" },
-    zen: { color: "success", icon: "🪷" },
-    giardini: { color: "success", icon: "🌸" },
-    kyoto: { color: "warning", icon: "🏯" },
-    bambù: { color: "success", icon: "🎋" },
-    panorama: { color: "primary", icon: "🌅" },
-    Osaka: { color: "danger", icon: "🌆" },
-    castelli: { color: "primary", icon: "🏰" },
+  // Funzione per formattare la data in gg/mm/aaaa
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${day}/${month}/${year}`;
   };
 
-  const humorIcons: Record<string, string> = {
-    Felice: "😊",
-    Rilassato: "😌",
-    Sorpreso: "😲",
-    Entusiasta: "🤩",
-    Eccitato: "😃",
-    Affascinato: "😍",
-    Riflessivo: "🤔",
-    Ammirato: "👏",
-    Sereno: "🌿",
-    Impressionato: "😮",
-    Curioso: "🧐",
-  };
-
-  const tagsList: Record<string, string> = {
-    nightlife: "🌃",
-    città: "🏙️",
-    natura: "🌿",
-    templi: "⛩️",
-    spiritualità: "🕊️",
-    cibo: "🍜",
-    divertimento: "🎉",
-    animali: "🐾",
-    relax: "🛀",
-    shopping: "🛍️",
-    cultura: "📚",
-    musei: "🏛️",
-    mare: "🌊",
-    tecnologia: "💻",
-    anime: "🎌",
-    tradizione: "🏮",
-    parcoDivertimenti: "🎢",
-    storia: "📜",
-    arte: "🎨",
-    zen: "🪷",
-    giardini: "🌸",
-    kyoto: "🏯",
-    bambù: "🎋",
-    panorama: "🌅",
-    osaka: "🌆",
-    castelli: "🏰",
-  };
-
+  // Funzione per assegnare i badge e le icone ai tag
   function renderTags(tags: string[]) {
     return tags.map((tag) => {
       tag.trim().toLocaleLowerCase();
@@ -132,12 +73,58 @@ export function useTravel() {
     }
   };
 
+  // Tutti i tag con colori e icone
+  const tagStyles: Record<string, { color: string; icon: string }> = {
+    nightlife: { color: "dark", icon: "🌃" },
+    città: { color: "primary", icon: "🏙️" },
+    natura: { color: "success", icon: "🌿" },
+    templi: { color: "warning", icon: "⛩️" },
+    spiritualità: { color: "info", icon: "🕊️" },
+    cibo: { color: "danger", icon: "🍜" },
+    divertimento: { color: "secondary", icon: "🎉" },
+    animali: { color: "success", icon: "🐾" },
+    relax: { color: "info", icon: "🛀" },
+    shopping: { color: "secondary", icon: "🛍️" },
+    cultura: { color: "secondary", icon: "📚" },
+    musei: { color: "primary", icon: "🏛️" },
+    mare: { color: "info", icon: "🌊" },
+    tecnologia: { color: "dark", icon: "💻" },
+    anime: { color: "warning", icon: "🎌" },
+    tradizione: { color: "danger", icon: "🏮" },
+    ParcoDivertimenti: { color: "success", icon: "🎢" },
+    storia: { color: "secondary", icon: "📜" },
+    arte: { color: "danger", icon: "🎨" },
+    zen: { color: "success", icon: "🪷" },
+    giardini: { color: "success", icon: "🌸" },
+    kyoto: { color: "warning", icon: "🏯" },
+    bambù: { color: "success", icon: "🎋" },
+    panorama: { color: "primary", icon: "🌅" },
+    Osaka: { color: "danger", icon: "🌆" },
+    castelli: { color: "primary", icon: "🏰" },
+  };
+
+  // Tutte le icone per gli umori
+  const humorIcons: Record<string, string> = {
+    Felice: "😊",
+    Rilassato: "😌",
+    Sorpreso: "😲",
+    Entusiasta: "🤩",
+    Eccitato: "😃",
+    Affascinato: "😍",
+    Riflessivo: "🤔",
+    Ammirato: "👏",
+    Sereno: "🌿",
+    Impressionato: "😮",
+    Curioso: "🧐",
+  };
+
   return {
     posts,
     renderTags,
     humorIcons,
-    tagsList,
     expenceTagsColor,
     fetchPosts,
+    formatDate,
+    tagStyles,
   };
 }

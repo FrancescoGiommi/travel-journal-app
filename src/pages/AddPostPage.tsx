@@ -7,7 +7,9 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function AddPostPage() {
   const navigate = useNavigate();
 
-  const { humorIcons, fetchPosts } = useGlobalContext();
+  const { humorIcons, fetchPosts, formatDate } = useGlobalContext();
+
+  // Stati per ogni campo del form
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
@@ -21,23 +23,21 @@ export default function AddPostPage() {
   const [negativeReflection, setNegativeReflection] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   // Funzione che trasforma la stringa dei tags in array
   const handleTagsChange = (value: string) => {
     setTagsInput(value);
-    const arr = value
+    const tagsArray = value
       .split(",")
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
-    setTags(arr);
-  };
+    setTags(tagsArray);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    if (tagsArray.length <= 3) {
+      setTagsInput(value);
+      setTags(tagsArray);
+    }
   };
 
   // Funzione per ottenere l'URL dell'immagine
@@ -47,7 +47,25 @@ export default function AddPostPage() {
     return `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${fileName}`;
   };
 
-  const handleSave = async () => {
+  // Funzione per salvare un nuovo post
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+
+    if (
+      !title ||
+      !location ||
+      !description ||
+      !image ||
+      !date ||
+      !expenceEuro ||
+      !positiveReflection ||
+      !negativeReflection ||
+      !tagsInput
+    ) {
+      return;
+    }
+
     const newPost: NewTravelPost = {
       title,
       location,
@@ -72,8 +90,6 @@ export default function AddPostPage() {
       return;
     }
 
-    console.log("Nuovo post salvato!");
-
     // Aggiorna i post nella home
     await fetchPosts();
 
@@ -92,7 +108,7 @@ export default function AddPostPage() {
     setTagsInput("");
     setTags([]);
 
-    // vai in home
+    // torno alla home
     navigate("/");
   };
 
@@ -110,8 +126,10 @@ export default function AddPostPage() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="form-control text-bg-dark mb-3"
                   id="title"
+                  className={`form-control text-bg-dark mb-3 ${
+                    formSubmitted && !title ? "is-invalid" : ""
+                  }`}
                   required
                 />
               </div>
@@ -122,9 +140,10 @@ export default function AddPostPage() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="form-control text-bg-dark mb-3"
                   id="location"
-                  placeholder="Inserisci il Luogo"
+                  className={`form-control text-bg-dark mb-3 ${
+                    formSubmitted && !location ? "is-invalid" : ""
+                  }`}
                   required
                 />
               </div>
@@ -134,10 +153,12 @@ export default function AddPostPage() {
               {/* Descrizione */}
               <span className="text-light mb-1">Inserisci una descrizione</span>
               <textarea
-                className="form-control text-bg-dark"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 id="description"
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !description ? "is-invalid" : ""
+                }`}
                 required
               ></textarea>
             </div>
@@ -151,8 +172,10 @@ export default function AddPostPage() {
                   type="text"
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
-                  className="form-control text-bg-dark"
                   id="image"
+                  className={`form-control text-bg-dark mb-3 ${
+                    formSubmitted && !image ? "is-invalid" : ""
+                  }`}
                   required
                 />
               </div>
@@ -163,8 +186,10 @@ export default function AddPostPage() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="form-control text-bg-dark"
                   id="date"
+                  className={`form-control text-bg-dark mb-3 ${
+                    formSubmitted && !date ? "is-invalid" : ""
+                  }`}
                   required
                 />
               </div>
@@ -177,8 +202,10 @@ export default function AddPostPage() {
                 type="number"
                 value={expenceEuro}
                 onChange={(e) => setExpenseEuro(Number(e.target.value))}
-                className="form-control text-bg-dark"
                 id="expense_euro"
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !expenceEuro ? "is-invalid" : ""
+                }`}
                 required
               />
             </div>
@@ -190,10 +217,13 @@ export default function AddPostPage() {
                 </span>
 
                 <select
-                  className="form-select text-bg-dark"
                   aria-label="Default select example"
                   value={economicEffort}
                   onChange={(e) => setEconomicEffort(Number(e.target.value))}
+                  className={`form-control text-bg-dark mb-3 ${
+                    formSubmitted && !economicEffort ? "is-invalid" : ""
+                  }`}
+                  required
                 >
                   <option value="">Seleziona un opzione</option>
                   <option value="1">1</option>
@@ -210,12 +240,15 @@ export default function AddPostPage() {
                 </span>
 
                 <select
-                  className="form-select text-bg-dark form-control"
                   aria-label="Default select example"
                   value={physicalCommitment}
                   onChange={(e) =>
                     setPhysicalCommitment(Number(e.target.value))
                   }
+                  className={`form-control text-bg-dark mb-3 ${
+                    formSubmitted && !physicalCommitment ? "is-invalid" : ""
+                  }`}
+                  required
                 >
                   <option value="">Seleziona un opzione</option>
                   <option value="1">1</option>
@@ -231,10 +264,13 @@ export default function AddPostPage() {
               {/* Stato d'animo */}
               <span className="text-light mb-1">Seleziona stato d'animo</span>
               <select
-                className="form-select text-bg-dark"
                 aria-label="Default select example"
                 value={humor}
                 onChange={(e) => setHumor(e.target.value)}
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !humor ? "is-invalid" : ""
+                }`}
+                required
               >
                 <option value="">Seleziona un opzione</option>
                 {Object.entries(humorIcons).map(([key, icon]) => (
@@ -251,10 +287,12 @@ export default function AddPostPage() {
                 Inserisci una riflessione positiva
               </span>
               <textarea
-                className="form-control text-bg-dark"
                 id="positive_reflection"
                 value={positiveReflection}
                 onChange={(e) => setPositiveReflection(e.target.value)}
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !positiveReflection ? "is-invalid" : ""
+                }`}
                 required
               ></textarea>
             </div>
@@ -265,10 +303,12 @@ export default function AddPostPage() {
                 Inserisci una riflessione negativa
               </span>
               <textarea
-                className="form-control text-bg-dark"
                 id="negative_reflection"
                 value={negativeReflection}
                 onChange={(e) => setNegativeReflection(e.target.value)}
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !negativeReflection ? "is-invalid" : ""
+                }`}
                 required
               ></textarea>
             </div>
@@ -279,9 +319,11 @@ export default function AddPostPage() {
               </span>
               <input
                 type="text"
-                className="form-control text-bg-dark mb-2"
                 value={tagsInput}
                 onChange={(e) => handleTagsChange(e.target.value)}
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && tags.length === 0 ? "is-invalid" : ""
+                }`}
                 required
               />
               <span className="text-light">

@@ -19,7 +19,7 @@ export default function PostCard({
   expence_euro,
   expenceTagsColor = (expence: number | null) => (
     <p className="badge text-bg-secondary">
-      {expence !== null ? `${expence} €` : "N/D"}
+      {expence !== null ? `${expence} €` : 0}
     </p>
   ),
 }: PostCardProps) {

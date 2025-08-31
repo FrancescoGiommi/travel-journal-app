@@ -4,16 +4,21 @@ import { supabase } from "../../supabase/supabaseClient";
 import DeletePostModal from "../components/DeletePostModal";
 
 export default function DetailsPage() {
-  const navigate = useNavigate();
-
-  const { fetchPosts } = useGlobalContext();
   const { id } = useParams<{ id: string }>();
 
-  const { posts, renderTags, humorIcons, expenceTagsColor } =
-    useGlobalContext();
+  const navigate = useNavigate();
+
+  const {
+    fetchPosts,
+    posts,
+    renderTags,
+    humorIcons,
+    expenceTagsColor,
+    formatDate,
+  } = useGlobalContext();
 
   if (!id) {
-    return <p>ID non valido</p>;
+    return <p>Post non trovato</p>;
   }
 
   const numericId = parseInt(id, 10);
@@ -35,7 +40,7 @@ export default function DetailsPage() {
       return;
     }
 
-    // rifaccio la query per ottenere la lista aggiornata dal db
+    // rifaccio la query per ottenere la lista aggiornata
     await fetchPosts();
 
     navigate("/");
@@ -46,6 +51,7 @@ export default function DetailsPage() {
       <div className="container">
         <h1 className="mt-5 text-light mb-5">Pagina di dettaglio</h1>
         <div className="text-center">
+          {/* Immagine */}
           <div>
             <img
               className="img-detail"
@@ -54,8 +60,11 @@ export default function DetailsPage() {
             />
           </div>
           <div className="text-start glass-box mt-5 mb-5">
+            {/* Titolo */}
             <div className="d-flex justify-content-between">
               <h2>{locationDetails.title}</h2>
+
+              {/* Bottone per eliminare il post */}
               <button
                 type="button"
                 className="btn btn-danger rounded-3"
@@ -65,18 +74,22 @@ export default function DetailsPage() {
                 Elimina
               </button>
             </div>
+            {/* Luogo e Data */}
             <div className="d-flex align-items-center gap-5">
               <p>Luogo: {locationDetails.location}</p>
-              <p>Data: {locationDetails.date}</p>
+              <p>Data: {formatDate(locationDetails.date)}</p>
             </div>
 
+            {/* Descrizione */}
             <p>Descrizione: {locationDetails.description}</p>
 
+            {/* Riflessione positiva e negativa */}
             <div className="d-flex align-items-center gap-5">
               <p>Riflessione positiva: {locationDetails.positive_reflection}</p>
               <p>Riflessione negativa: {locationDetails.negative_reflection}</p>
             </div>
 
+            {/* Effort economico e costo */}
             <div className="d-flex align-items-center gap-5">
               <p>Effort economico: {locationDetails.economic_effort}/5</p>
               <p>
@@ -85,6 +98,7 @@ export default function DetailsPage() {
             </div>
 
             <div className="d-flex align-items-center gap-5">
+              {/* Umore e impergno fisico */}
               <div className="d-flex">
                 <p className="me-2">Umore:</p>
                 <p className="badge text-bg-primary">
@@ -94,6 +108,7 @@ export default function DetailsPage() {
               <p>Impegno fisico: {locationDetails.physical_commitment}/5</p>
             </div>
 
+            {/* tags */}
             <div className="d-flex align-items-center">
               <p>Tags: {renderTags(locationDetails.tags)}</p>
             </div>
@@ -101,6 +116,7 @@ export default function DetailsPage() {
         </div>
       </div>
 
+      {/* Moodale di conferma eliminazione */}
       <DeletePostModal
         postId={numericId}
         onConfirm={handleDelete}

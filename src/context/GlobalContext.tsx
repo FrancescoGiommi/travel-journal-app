@@ -11,8 +11,9 @@ type GlobalContextType = {
   posts: TravelPost[];
   renderTags: (tags: string[]) => React.ReactNode[];
   humorIcons: Record<string, string>;
-  tagsList: Record<string, string>;
   expenceTagsColor: (expence: number | null) => React.ReactNode;
+  formatDate: (datestring: string) => string;
+  tagStyles: Record<string, { color: string; icon: string }>;
 };
 
 const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -24,9 +25,10 @@ export const GlobalContextProvider = ({
     posts,
     renderTags,
     humorIcons,
-    tagsList,
     expenceTagsColor,
     fetchPosts,
+    formatDate,
+    tagStyles,
   } = useTravel();
 
   return (
@@ -35,9 +37,10 @@ export const GlobalContextProvider = ({
         posts,
         renderTags,
         humorIcons,
-        tagsList,
         expenceTagsColor,
         fetchPosts,
+        formatDate,
+        tagStyles,
       }}
     >
       {children}

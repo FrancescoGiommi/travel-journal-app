@@ -1,4 +1,3 @@
-// types.ts
 export type TravelPost = {
   id: number;
   title: string;
@@ -17,5 +16,4 @@ export type TravelPost = {
   tags: string[];
 };
 
-// per i nuovi post che arrivano dal form
 export type NewTravelPost = Omit<TravelPost, "id" | "latitude" | "longitude">;

@@ -1,5 +1,6 @@
 import type { TravelPost } from "../types";
 
+// Funzione di type guard per TravelPost
 function isTravelPost(dati: unknown): dati is TravelPost {
   if (dati && typeof dati === "object") {
     const obj = dati as { [key: string]: unknown };

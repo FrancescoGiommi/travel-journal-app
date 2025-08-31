@@ -4,6 +4,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 
 import PostCard from "../components/PostCard";
 
+// Funzione di debounce
 function debounce<T>(callback: (value: T) => void, delay: number) {
   let timer: ReturnType<typeof setTimeout>;
   return (value: T) => {
@@ -15,9 +16,10 @@ function debounce<T>(callback: (value: T) => void, delay: number) {
 }
 
 export default function HomePage() {
-  const { posts, renderTags, humorIcons, tagsList, expenceTagsColor } =
+  const { posts, renderTags, humorIcons, expenceTagsColor, tagStyles } =
     useGlobalContext();
 
+  // Stati per la ricerca e i filtri
   const [searchBar, setSearchBar] = useState("");
   const [searchText, setSearchText] = useState("");
   const [filterHumor, setFilterHumor] = useState("");
@@ -48,6 +50,7 @@ export default function HomePage() {
     return matchesText && matchesHumor && matchesTags;
   });
 
+  // Funzione per il debounce della ricerca
   const debouncedSearch = useMemo(
     () => debounce<string>((value) => setSearchBar(value), 300),
     []
@@ -94,6 +97,7 @@ export default function HomePage() {
       <div className="container">
         <div className="d-flex justify-content-between mb-2">
           <h2 className="text-light">Viaggio in Giappone</h2>
+
           {/* Bottone per aggiungere un post */}
           <div className="d-flex flex-column">
             <Link to={"/addPost"}>
@@ -112,6 +116,7 @@ export default function HomePage() {
             <div className="d-flex justify-content-around mb-2 gap-3">
               <div className="d-flex flex-column w-100">
                 <span className="text-light mb-1">Filtra per testo</span>
+
                 {/* Input filtro per testo */}
                 <input
                   className="form-control text-bg-dark"
@@ -127,6 +132,7 @@ export default function HomePage() {
                 <span className="text-light mb-1">
                   Filtra per stato d'animo
                 </span>
+
                 {/* Select filtro per stato d'animo */}
                 <select
                   value={filterHumor}
@@ -148,6 +154,7 @@ export default function HomePage() {
             <div className="d-flex justify-content-between">
               <div className="d-flex flex-column w-100">
                 <span className="text-light mb-1">Filtra per Tags</span>
+
                 {/* Select filtro per tags */}
                 <select
                   value=""
@@ -158,7 +165,7 @@ export default function HomePage() {
                   aria-label="Default select example"
                 >
                   <option value="">Seleziona tag</option>
-                  {Object.entries(tagsList).map(([key, icon]) => (
+                  {Object.entries(tagStyles).map(([key, { icon }]) => (
                     <option key={key} value={key}>
                       {icon}
 
@@ -215,15 +222,18 @@ export default function HomePage() {
         )}
 
         {/* Mostra i tags selezionati */}
-        {selectedTags.map((tag) => (
-          <span
-            key={tag}
-            className="btn btn-primary me-2 mt-2 mb-2"
-            onClick={() => removeTag(tag)}
-          >
-            {tagsList[tag]} {tag} <span className="ms-1">x</span>
-          </span>
-        ))}
+        {selectedTags.map((tag) => {
+          const style = tagStyles[tag];
+          return (
+            <span
+              key={tag}
+              className={`btn btn-primary text-bg-${style.color} me-2 mt-2 mb-2`}
+              onClick={() => removeTag(tag)}
+            >
+              {style.icon} {tag} X
+            </span>
+          );
+        })}
 
         <div className="row justify-content-center">
           {orderedPosts.map((post) => (
