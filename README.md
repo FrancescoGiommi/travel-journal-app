@@ -1,69 +1,39 @@
-# React + TypeScript + Vite
+🌍 Diario di Viaggio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un progetto realizzato con React + Vite, Bootstrap, Typescript e Supabase che permette di creare, visualizzare e gestire post di viaggio.
 
-Currently, two official plugins are available:
+✨ Funzionalità principali
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+📌 Creazione post con titolo, descrizione, luogo, data, riflessione positiva, riflessione negativa, effort economico, umore, impegno fisico, spesa in euro e tags.
 
-## Expanding the ESLint configuration
+🖼️ Visualizzazione dettagliata di ogni post con informazioni complete.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+🔍 Ricerca e filtri (per testo, umore e tag).
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+↕️ Ordinamento dinamico dei post:
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- per data (più recente ↔ meno recente)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- per spesa (da € a €€€ o viceversa)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+🗑️ Eliminazione post con modal di conferma.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+🛠️ Stack Tecnologico
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Frontend: React + Vite + TypeScript + Bootstrap
+
+- Backend/DB: Supabase
+
+- Stato e logica: React hooks (useState, useEffect, useMemo, useNavigate)
+
+🚀 Obiettivi
+
+Il progetto nasce come esercizio pratico per:
+
+- Gestire CRUD con Supabase.
+
+- Applicare filtri e ordinamenti combinabili.
+
+- Creare un’interfaccia user-friendly.
+
+- Strutturare il codice seguendo buone pratiche React.
