@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 
@@ -51,8 +51,8 @@ export default function HomePage() {
   });
 
   // Funzione per il debounce della ricerca
-  const debouncedSearch = useMemo(
-    () => debounce<string>((value) => setSearchBar(value), 300),
+  const debouncedSearch = useCallback(
+    debounce<string>((value) => setSearchBar(value), 300),
     []
   );
 
