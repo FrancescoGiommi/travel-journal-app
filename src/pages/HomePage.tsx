@@ -30,6 +30,8 @@ export default function HomePage() {
   );
   const [sortOrderDate, setSortOrderDate] = useState<"asc" | "desc">("asc");
   const [sortBy, setSortBy] = useState<"expence" | "date" | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 9;
 
   const filterByTextAndHumorAndTags = posts.filter((post) => {
     const matchesText = post.title
@@ -88,6 +90,14 @@ export default function HomePage() {
       return 0;
     });
   }, [filterByTextAndHumorAndTags, sortBy, sortOrderExpense, sortOrderDate]);
+
+  // Calcolo degli indici per slice
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = orderedPosts.slice(indexOfFirstPost, indexOfLastPost);
+
+  // Quante pagine totali
+  const totalPages = Math.ceil(orderedPosts.length / postsPerPage);
 
   return (
     <>
@@ -236,7 +246,7 @@ export default function HomePage() {
         })}
 
         <div className="row justify-content-center">
-          {orderedPosts.map((post) => (
+          {currentPosts.map((post) => (
             <div
               key={post.id}
               className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
@@ -261,32 +271,45 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-        <nav aria-label="..." className="mx-auto">
+
+        {/* Paginazione */}
+        <nav
+          aria-label="Page navigation"
+          className="d-flex justify-content-center"
+        >
           <ul className="pagination">
-            <li className="page-item">
-              <a href="#" className="page-link">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
                 Previous
-              </a>
+              </button>
             </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                1
-              </a>
-            </li>
-            <li className="page-item active">
-              <a className="page-link" href="#" aria-current="page">
-                2
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                3
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <li
+                key={i}
+                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              </li>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
                 Next
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
