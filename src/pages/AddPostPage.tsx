@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import type { NewTravelPost } from "../../types";
 import { supabase } from "../../supabase/supabaseClient";
 import { useGlobalContext } from "../context/GlobalContext";
@@ -331,9 +331,14 @@ export default function AddPostPage() {
               </span>
             </div>
           </form>
-          <button className="btn btn-success" onClick={handleSave}>
-            Salva post
-          </button>
+          <div className="d-flex gap-3">
+            <button className="btn btn-success" onClick={handleSave}>
+              Salva post
+            </button>
+            <Link to={"/"}>
+              <button className="btn btn-secondary">Annulla</button>
+            </Link>
+          </div>
         </div>
       </div>
     </>
