@@ -37,6 +37,7 @@ export default function HomePage() {
     const matchesText = post.title
       .toLowerCase()
       .includes(searchBar.toLowerCase());
+
     const matchesHumor =
       !filterHumor.trim() ||
       post.humor.toLowerCase() === filterHumor.toLowerCase();
@@ -246,73 +247,85 @@ export default function HomePage() {
         })}
 
         <div className="row justify-content-center">
-          {currentPosts.map((post) => (
-            <div
-              key={post.id}
-              className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
-            >
-              <div className="card h-100">
-                <Link
-                  to={`/details/${post.id}`}
-                  className="text-decoration-none text-dark"
-                >
-                  <PostCard
-                    image={post.image}
-                    title={post.title}
-                    tags={post.tags}
-                    renderTags={renderTags}
-                    humor={post.humor}
-                    humorIcons={humorIcons}
-                    expence_euro={post.expence_euro}
-                    expenceTagsColor={expenceTagsColor}
-                  />
-                </Link>
+          {currentPosts.length === 0 ? (
+            <p className="text-light text-center fs-1 mt-3">
+              Nessun post trovato
+            </p>
+          ) : (
+            currentPosts.map((post) => (
+              <div
+                key={post.id}
+                className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
+              >
+                <div className="card h-100">
+                  <Link
+                    to={`/details/${post.id}`}
+                    className="text-decoration-none text-dark"
+                  >
+                    <PostCard
+                      image={post.image}
+                      title={post.title}
+                      tags={post.tags}
+                      renderTags={renderTags}
+                      humor={post.humor}
+                      humorIcons={humorIcons}
+                      expence_euro={post.expence_euro}
+                      expenceTagsColor={expenceTagsColor}
+                    />
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Paginazione */}
-        <nav
-          aria-label="Page navigation"
-          className="d-flex justify-content-center"
-        >
-          <ul className="pagination">
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
-                Previous
-              </button>
-            </li>
-            {Array.from({ length: totalPages }, (_, i) => (
+        {totalPages > 1 && (
+          <nav
+            aria-label="Page navigation"
+            className="d-flex justify-content-center"
+          >
+            <ul className="pagination">
               <li
-                key={i}
-                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
               >
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage(i + 1)}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
                 >
-                  {i + 1}
+                  Previous
                 </button>
               </li>
-            ))}
-            <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
-            >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => prev + 1)}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li
+                  key={i}
+                  className={`page-item ${
+                    currentPage === i + 1 ? "active" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+              <li
+                className={`page-item ${
+                  currentPage === totalPages ? "disabled" : ""
+                }`}
               >
-                Next
-              </button>
-            </li>
-          </ul>
-        </nav>
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
+        )}
       </div>
     </>
   );
