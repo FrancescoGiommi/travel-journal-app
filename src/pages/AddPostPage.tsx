@@ -13,7 +13,8 @@ export default function AddPostPage() {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFileName, setImageFileName] = useState("");
   const [date, setDate] = useState("");
   const [expenceEuro, setExpenseEuro] = useState<number | "">("");
   const [economicEffort, setEconomicEffort] = useState<number | "">("");
@@ -40,11 +41,33 @@ export default function AddPostPage() {
     }
   };
 
-  // Funzione per ottenere l'URL dell'immagine
+  // Formatta il nome del file: minuscolo, spazi -> trattini, timestamp univoco
+  const formatFileName = (name: string): string => {
+    const ext = name.split(".").pop() ?? "";
+    const base = name.slice(0, -(ext.length + 1));
+    const slug = base.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    return `${slug}-${Date.now()}.${ext}`;
+  };
+
+  // Gestisce la selezione del file immagine
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (file) {
+      const formatted = formatFileName(file.name);
+      setImageFile(file);
+      setImageFileName(formatted);
+    } else {
+      setImageFile(null);
+      setImageFileName("");
+    }
+  };
+
+  // Funzione per ottenere l'URL pubblico dell'immagine dallo storage
   const getImageUrl = (fileName: string): string => {
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    const bucket = "travel_images";
-    return `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${fileName}`;
+    const { data } = supabase.storage
+      .from("travel_images")
+      .getPublicUrl(fileName);
+    return data.publicUrl;
   };
 
   // Funzione per salvare un nuovo post
@@ -56,7 +79,7 @@ export default function AddPostPage() {
       !title ||
       !location ||
       !description ||
-      !image ||
+      !imageFile ||
       !date ||
       !expenceEuro ||
       !positiveReflection ||
@@ -66,12 +89,22 @@ export default function AddPostPage() {
       return;
     }
 
+    // Carica l'immagine su Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from("travel_images")
+      .upload(imageFileName, imageFile);
+
+    if (uploadError) {
+      console.error("Errore nel caricamento dell'immagine:", uploadError.message);
+      return;
+    }
+
     const newPost: NewTravelPost = {
       title,
       location,
       description,
-      image: getImageUrl(image),
-      date: formatDate(date),
+      image: getImageUrl(imageFileName),
+      date: date,
       expence_euro: Number(expenceEuro),
       economic_effort: Number(economicEffort),
       physical_commitment: Number(physicalCommitment),
@@ -97,7 +130,8 @@ export default function AddPostPage() {
     setTitle("");
     setLocation("");
     setDescription("");
-    setImage("");
+    setImageFile(null);
+    setImageFileName("");
     setDate("");
     setExpenseEuro("");
     setEconomicEffort("");
@@ -165,19 +199,20 @@ export default function AddPostPage() {
             <div className="d-flex gap-3 mb-3">
               <div className="d-flex flex-column w-100">
                 {/* Immagine */}
-                <span className="text-light mb-1">
-                  Inserisci il nome dell'immagine
-                </span>
+                <span className="text-light mb-1">Carica un'immagine</span>
                 <input
-                  type="text"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
                   id="image"
-                  className={`form-control text-bg-dark mb-3 ${
-                    formSubmitted && !image ? "is-invalid" : ""
+                  className={`form-control text-bg-dark mb-1 ${
+                    formSubmitted && !imageFile ? "is-invalid" : ""
                   }`}
                   required
                 />
+                {imageFileName && (
+                  <small className="text-secondary mb-2">Nome file: {imageFileName}</small>
+                )}
               </div>
               <div className="d-flex flex-column w-100">
                 {/* Data */}
