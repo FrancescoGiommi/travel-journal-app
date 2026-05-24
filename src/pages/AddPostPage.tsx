@@ -149,7 +149,14 @@ export default function AddPostPage() {
   return (
     <>
       <div className="container pt-5">
-        <h1 className="mb-5 text-light">Aggiungi post</h1>
+        <div className="position-relative mb-5">
+          <button
+            className="btn btn-primary position-absolute"
+            style={{ right: "calc(100% + 20px)", top: "4px", whiteSpace: "nowrap" }}
+            onClick={() => navigate(-1)}
+          >← Indietro</button>
+          <h1 className="text-light mb-0">Aggiungi post</h1>
+        </div>
         <div className="glass-box">
           <form action="">
             <div className="d-flex gap-3">

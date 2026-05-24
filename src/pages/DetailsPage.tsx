@@ -49,7 +49,14 @@ export default function DetailsPage() {
   return (
     <>
       <div className="container">
-        <h1 className="mt-5 text-light mb-5">Pagina di dettaglio</h1>
+        <div className="position-relative mt-5 mb-5">
+          <button
+            className="btn btn-primary position-absolute"
+            style={{ right: "calc(100% + 20px)", top: "4px", whiteSpace: "nowrap" }}
+            onClick={() => navigate(-1)}
+          >← Indietro</button>
+          <h1 className="text-light mb-0">Pagina di dettaglio</h1>
+        </div>
         <div className="text-center">
           {/* Immagine */}
           <div>
