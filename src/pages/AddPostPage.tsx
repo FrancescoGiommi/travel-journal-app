@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import Select from "react-select";
 import type { NewTravelPost } from "../../types";
 import { supabase } from "../../supabase/supabaseClient";
 import { useGlobalContext } from "../context/GlobalContext";
@@ -354,24 +355,41 @@ export default function AddPostPage() {
               <span className="text-light mb-1">
                 Seleziona fino a 3 tags
               </span>
-              <select
-                value=""
-                onChange={(e) => handleTagSelect(e.target.value)}
-                className={`form-select text-bg-dark mb-2 ${
-                  formSubmitted && tags.length === 0 ? "is-invalid" : ""
-                }`}
-                disabled={tags.length >= 3}
-              >
-                <option value="">Seleziona un tag</option>
-                {Object.entries(tagStyles)
+              <Select
+                options={Object.entries(tagStyles)
                   .filter(([key]) => !tags.includes(key))
-                  .map(([key, { icon }]) => (
-                    <option key={key} value={key}>
-                      {icon} {key}
-                    </option>
-                  ))}
-              </select>
-              <div className="d-flex flex-wrap gap-2 mt-1">
+                  .map(([key, { icon }]) => ({ value: key, label: `${icon} ${key}` }))}
+                onChange={(option) => { if (option) handleTagSelect(option.value); }}
+                value={null}
+                isDisabled={tags.length >= 3}
+                placeholder="Cerca un tag..."
+                classNamePrefix="rs"
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                  control: (base, state) => ({
+                    ...base,
+                    backgroundColor: "#212529",
+                    borderColor: formSubmitted && tags.length === 0 ? "#dc3545" : state.isFocused ? "#86b7fe" : "#495057",
+                    boxShadow: state.isFocused ? "0 0 0 0.25rem rgba(13,110,253,.25)" : "none",
+                    color: "#fff",
+                  }),
+                  menu: (base) => ({ ...base, backgroundColor: "#212529", zIndex: 9999 }),
+                  option: (base, state) => ({
+                    ...base,
+                    backgroundColor: state.isFocused ? "#2c3034" : "#212529",
+                    color: "#fff",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (base) => ({ ...base, color: "#fff" }),
+                  input: (base) => ({ ...base, color: "#fff" }),
+                  placeholder: (base) => ({ ...base, color: "#adb5bd" }),
+                  indicatorSeparator: (base) => ({ ...base, backgroundColor: "#495057" }),
+                  dropdownIndicator: (base) => ({ ...base, color: "#adb5bd" }),
+                }}
+              />
+              <div className="d-flex flex-wrap gap-2 mt-2">
                 {tags.map((tag) => (
                   <span
                     key={tag}
