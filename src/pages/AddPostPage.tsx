@@ -7,7 +7,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function AddPostPage() {
   const navigate = useNavigate();
 
-  const { humorIcons, fetchPosts } = useGlobalContext();
+  const { humorIcons, fetchPosts, tagStyles } = useGlobalContext();
 
   // Stati per ogni campo del form
   const [title, setTitle] = useState("");
@@ -22,23 +22,19 @@ export default function AddPostPage() {
   const [humor, setHumor] = useState("");
   const [positiveReflection, setPositiveReflection] = useState("");
   const [negativeReflection, setNegativeReflection] = useState("");
-  const [tagsInput, setTagsInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Funzione che trasforma la stringa dei tags in array
-  const handleTagsChange = (value: string) => {
-    setTagsInput(value);
-    const tagsArray = value
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-    setTags(tagsArray);
-
-    if (tagsArray.length <= 3) {
-      setTagsInput(value);
-      setTags(tagsArray);
+  // Aggiunge un tag se non già presente e se sotto il limite di 3
+  const handleTagSelect = (tag: string) => {
+    if (tag && !tags.includes(tag) && tags.length < 3) {
+      setTags((prev) => [...prev, tag]);
     }
+  };
+
+  // Rimuove un tag dalla lista
+  const handleTagRemove = (tag: string) => {
+    setTags((prev) => prev.filter((t) => t !== tag));
   };
 
   // Formatta il nome del file: minuscolo, spazi -> trattini, timestamp univoco
@@ -84,7 +80,7 @@ export default function AddPostPage() {
       !expenceEuro ||
       !positiveReflection ||
       !negativeReflection ||
-      !tagsInput
+      tags.length === 0
     ) {
       return;
     }
@@ -139,7 +135,6 @@ export default function AddPostPage() {
     setHumor("");
     setPositiveReflection("");
     setNegativeReflection("");
-    setTagsInput("");
     setTags([]);
 
     // torno alla home
@@ -357,20 +352,42 @@ export default function AddPostPage() {
             {/* Tags */}
             <div className="d-flex flex-column w-100 mb-3">
               <span className="text-light mb-1">
-                Inserisci fino a 3 tags separati da virgola
+                Seleziona fino a 3 tags
               </span>
-              <input
-                type="text"
-                value={tagsInput}
-                onChange={(e) => handleTagsChange(e.target.value)}
-                className={`form-control text-bg-dark mb-3 ${
+              <select
+                value=""
+                onChange={(e) => handleTagSelect(e.target.value)}
+                className={`form-select text-bg-dark mb-2 ${
                   formSubmitted && tags.length === 0 ? "is-invalid" : ""
                 }`}
-                required
-              />
-              <span className="text-light">
-                Tags attuali: {tags.join(", ")}
-              </span>
+                disabled={tags.length >= 3}
+              >
+                <option value="">Seleziona un tag</option>
+                {Object.entries(tagStyles)
+                  .filter(([key]) => !tags.includes(key))
+                  .map(([key, { icon }]) => (
+                    <option key={key} value={key}>
+                      {icon} {key}
+                    </option>
+                  ))}
+              </select>
+              <div className="d-flex flex-wrap gap-2 mt-1">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className={`badge bg-${tagStyles[tag]?.color ?? "secondary"} d-flex align-items-center gap-1`}
+                    style={{ fontSize: "0.85rem" }}
+                  >
+                    {tagStyles[tag]?.icon} {tag}
+                    <button
+                      type="button"
+                      className="btn-close btn-close-white ms-1"
+                      style={{ fontSize: "0.6rem" }}
+                      onClick={() => handleTagRemove(tag)}
+                    />
+                  </span>
+                ))}
+              </div>
             </div>
           </form>
           <div className="d-flex gap-3">
