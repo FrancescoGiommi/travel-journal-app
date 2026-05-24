@@ -7,7 +7,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function AddPostPage() {
   const navigate = useNavigate();
 
-  const { humorIcons, fetchPosts, formatDate } = useGlobalContext();
+  const { humorIcons, fetchPosts } = useGlobalContext();
 
   // Stati per ogni campo del form
   const [title, setTitle] = useState("");
