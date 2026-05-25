@@ -1,39 +1,55 @@
-🌍 Diario di Viaggio
+🌍 Diario di Viaggio in Giappone
 
-Un progetto realizzato con React + Vite, Bootstrap, Typescript e Supabase che permette di creare, visualizzare e gestire post di viaggio.
+Applicazione web realizzata con React, Vite, TypeScript, Bootstrap e Supabase per creare, visualizzare e gestire i post di un viaggio in Giappone.
+
+Ogni scheda rappresenta una tappa del viaggio e raccoglie informazioni come:
+- luogo visitato
+- descrizione
+- data
+- spesa
+- riflessione positiva e negativa
+- emozione provata
+- tag tematici
+
+📌 Contesto del progetto
+
+Questo progetto nasce come diario personale di un viaggio in Giappone e raccoglie luoghi iconici come Osaka, Kyoto, Akihabara, Shibuya, Asakusa, Ueno e Arashiyama.  
+L’obiettivo non è solo salvare dati, ma raccontare l’esperienza in modo visivo e ordinato.
 
 ✨ Funzionalità principali
 
-📌 Creazione post con titolo, descrizione, luogo, data, riflessione positiva, riflessione negativa, effort economico, umore, impegno fisico, spesa in euro e tags.
+- Creazione di nuovi post di viaggio.
+- Visualizzazione dettagliata di ogni tappa.
+- Ricerca e filtri per testo, umore e tag.
+- Ordinamento per data o per spesa.
+- Eliminazione dei post con conferma.
+- Paginazione dei risultati.
 
-🖼️ Visualizzazione dettagliata di ogni post con informazioni complete.
+🛠️ Stack tecnologico
 
-🔍 Ricerca e filtri (per testo, umore e tag).
+- Frontend: React, Vite, TypeScript, Bootstrap.
+- Backend/DB: Supabase.
+- Stato e logica: React Hooks.
 
-↕️ Ordinamento dinamico dei post:
+🚀 Obiettivi del progetto
 
-- per data (più recente ↔ meno recente)
-
-- per spesa (da € a €€€ o viceversa)
-
-🗑️ Eliminazione post con modal di conferma.
-
-🛠️ Stack Tecnologico
-
-- Frontend: React + Vite + TypeScript + Bootstrap
-
-- Backend/DB: Supabase
-
-- Stato e logica: React hooks (useState, useEffect, useMemo, useNavigate)
-
-🚀 Obiettivi
-
-Il progetto nasce come esercizio pratico per:
-
-- Gestire CRUD con Supabase.
-
+- Gestire un CRUD completo con Supabase.
+- Organizzare dati di viaggio in modo intuitivo.
+- Creare un’interfaccia piacevole e leggibile.
 - Applicare filtri e ordinamenti combinabili.
 
-- Creare un’interfaccia user-friendly.
+## Screenshot
+<img width="2560" height="1286" alt="immagine" src="https://github.com/user-attachments/assets/72f35774-d382-43f5-a684-41f2673cf102" />
 
-- Strutturare il codice seguendo buone pratiche React.
+<img width="2560" height="1287" alt="immagine" src="https://github.com/user-attachments/assets/523c879b-66d3-4cef-8417-fea119267c3a" />
+
+<img width="2560" height="1283" alt="immagine" src="https://github.com/user-attachments/assets/ba407a2a-30f1-4e76-84a8-d5c7aabf22c1" />
+
+<img width="2540" height="1288" alt="immagine" src="https://github.com/user-attachments/assets/5a7aef62-6c14-4976-9c9d-9c983e0b6da6" />
+
+<img width="2560" height="1284" alt="immagine" src="https://github.com/user-attachments/assets/e7aa2824-f7e5-4e47-b70b-740be9c8280f" />
+
+
+
+
+
