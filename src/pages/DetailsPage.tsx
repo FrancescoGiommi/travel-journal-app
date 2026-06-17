@@ -53,7 +53,7 @@ export default function DetailsPage() {
           <button
             className="btn btn-primary position-absolute"
             style={{ right: "calc(100% + 20px)", top: "4px", whiteSpace: "nowrap" }}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
           >← Indietro</button>
           <h1 className="text-light mb-0">Pagina di dettaglio</h1>
         </div>

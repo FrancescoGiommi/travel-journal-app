@@ -180,7 +180,9 @@ export default function AddPostPage() {
     setTags([]);
 
     // torno al dettaglio se sto modificando, altrimenti alla home
-    navigate(isEditMode && numericId ? `/details/${numericId}` : "/");
+    navigate(isEditMode && numericId ? `/details/${numericId}` : "/", {
+      replace: isEditMode,
+    });
   };
 
   if (isEditMode && !postToEdit) {
