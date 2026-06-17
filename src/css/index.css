@@ -17,7 +17,11 @@ body::before {
   z-index: -1;
   background:
     linear-gradient(120deg, rgba(3, 7, 18, 0.94), rgba(8, 47, 73, 0.72)),
-    radial-gradient(circle at 75% 15%, rgba(59, 130, 246, 0.28), transparent 34%);
+    radial-gradient(
+      circle at 75% 15%,
+      rgba(59, 130, 246, 0.28),
+      transparent 34%
+    );
 }
 
 button,
@@ -165,7 +169,9 @@ select {
   overflow: hidden;
   background: rgba(15, 23, 42, 0.68);
   box-shadow: 0 18px 54px rgba(2, 6, 23, 0.28);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .post-card-shell:hover {
@@ -262,7 +268,9 @@ select {
 }
 
 .card img {
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
   filter: brightness(70%);
 }
 

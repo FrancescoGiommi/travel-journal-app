@@ -60,13 +60,6 @@ export default function DetailsPage() {
           <div>
             <p className="app-kicker">Dettaglio viaggio</p>
             <h1 className="app-title">{locationDetails.title}</h1>
-            <div className="detail-meta">
-              <span className="meta-pill">{locationDetails.location}</span>
-              <span className="meta-pill">{formatDate(locationDetails.date)}</span>
-              <span className="meta-pill">
-                {humorIcons[locationDetails.humor]} {locationDetails.humor}
-              </span>
-            </div>
           </div>
 
           <div className="app-actions">
@@ -102,6 +95,13 @@ export default function DetailsPage() {
 
           <article className="app-panel">
             <div className="detail-section mt-0 pt-0 border-0">
+              <h3>Luogo & Data</h3>
+              <p>
+                {locationDetails.location} - {formatDate(locationDetails.date)}
+              </p>
+            </div>
+
+            <div className="detail-section">
               <h3>Descrizione</h3>
               <p>{locationDetails.description}</p>
             </div>
@@ -119,6 +119,13 @@ export default function DetailsPage() {
             </div>
 
             <div className="detail-section">
+              <h3>Umore</h3>
+              <p>
+                {humorIcons[locationDetails.humor]} {locationDetails.humor}
+              </p>
+            </div>
+
+            <div className="detail-section">
               <h3>Impegno e costo</h3>
               <div className="d-flex flex-wrap align-items-center gap-3">
                 <span className="meta-pill">
@@ -127,7 +134,9 @@ export default function DetailsPage() {
                 <span className="meta-pill">
                   Impegno fisico: {locationDetails.physical_commitment}/5
                 </span>
-                <span>{expenceTagsColor(locationDetails.expence_euro ?? 0)}</span>
+                <span>
+                  {expenceTagsColor(locationDetails.expence_euro ?? 0)}
+                </span>
               </div>
             </div>
 
