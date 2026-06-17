@@ -71,15 +71,26 @@ export default function DetailsPage() {
             <div className="d-flex justify-content-between">
               <h2>{locationDetails.title}</h2>
 
-              {/* Bottone per eliminare il post */}
-              <button
-                type="button"
-                className="btn btn-danger rounded-3"
-                data-bs-toggle="modal"
-                data-bs-target="#deletePostModal"
-              >
-                Elimina
-              </button>
+              <div className="d-flex gap-2">
+                {/* Bottone per modificare il post */}
+                <button
+                  type="button"
+                  className="btn btn-warning rounded-3"
+                  onClick={() => navigate(`/editPost/${numericId}`)}
+                >
+                  Modifica
+                </button>
+
+                {/* Bottone per eliminare il post */}
+                <button
+                  type="button"
+                  className="btn btn-danger rounded-3"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deletePostModal"
+                >
+                  Elimina
+                </button>
+              </div>
             </div>
             {/* Luogo e Data */}
             <div className="d-flex align-items-center gap-5">

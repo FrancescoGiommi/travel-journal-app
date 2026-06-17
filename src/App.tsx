@@ -15,6 +15,7 @@ function App() {
             <Route element={<HomePage />} path="/" />
             <Route element={<DetailsPage />} path="/details/:id" />
             <Route element={<AddPostPage />} path="/addPost" />
+            <Route element={<AddPostPage />} path="/editPost/:id" />
           </Routes>
         </BrowserRouter>
       </GlobalContextProvider>

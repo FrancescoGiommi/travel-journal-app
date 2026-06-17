@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import Select from "react-select";
 import type { NewTravelPost } from "../../types";
 import { supabase } from "../../supabase/supabaseClient";
@@ -7,8 +7,15 @@ import { useGlobalContext } from "../context/GlobalContext";
 
 export default function AddPostPage() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
-  const { humorIcons, fetchPosts, tagStyles } = useGlobalContext();
+  const { humorIcons, fetchPosts, tagStyles, posts } = useGlobalContext();
+
+  const numericId = id ? parseInt(id, 10) : null;
+  const isEditMode = numericId !== null && !Number.isNaN(numericId);
+  const postToEdit = isEditMode
+    ? posts.find((post) => post.id === numericId)
+    : null;
 
   // Stati per ogni campo del form
   const [title, setTitle] = useState("");
@@ -25,6 +32,22 @@ export default function AddPostPage() {
   const [negativeReflection, setNegativeReflection] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!isEditMode || !postToEdit) return;
+
+    setTitle(postToEdit.title);
+    setLocation(postToEdit.location);
+    setDescription(postToEdit.description);
+    setDate(postToEdit.date);
+    setExpenseEuro(postToEdit.expence_euro ?? "");
+    setEconomicEffort(postToEdit.economic_effort ?? "");
+    setPhysicalCommitment(postToEdit.physical_commitment ?? "");
+    setHumor(postToEdit.humor);
+    setPositiveReflection(postToEdit.positive_reflection);
+    setNegativeReflection(postToEdit.negative_reflection);
+    setTags(postToEdit.tags);
+  }, [isEditMode, postToEdit]);
 
   // Aggiunge un tag se non già presente e se sotto il limite di 3
   const handleTagSelect = (tag: string) => {
@@ -67,18 +90,25 @@ export default function AddPostPage() {
     return data.publicUrl;
   };
 
-  // Funzione per salvare un nuovo post
+  // Funzione per salvare un nuovo post o aggiornarne uno esistente
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormSubmitted(true);
+
+    if (isEditMode && !postToEdit) {
+      return;
+    }
 
     if (
       !title ||
       !location ||
       !description ||
-      !imageFile ||
+      (!isEditMode && !imageFile) ||
       !date ||
       !expenceEuro ||
+      !economicEffort ||
+      !physicalCommitment ||
+      !humor ||
       !positiveReflection ||
       !negativeReflection ||
       tags.length === 0
@@ -86,21 +116,27 @@ export default function AddPostPage() {
       return;
     }
 
-    // Carica l'immagine su Supabase Storage
-    const { error: uploadError } = await supabase.storage
-      .from("travel_images")
-      .upload(imageFileName, imageFile);
+    let imageUrl = postToEdit?.image ?? "";
 
-    if (uploadError) {
-      console.error("Errore nel caricamento dell'immagine:", uploadError.message);
-      return;
+    if (imageFile) {
+      // Carica l'immagine su Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("travel_images")
+        .upload(imageFileName, imageFile);
+
+      if (uploadError) {
+        console.error("Errore nel caricamento dell'immagine:", uploadError.message);
+        return;
+      }
+
+      imageUrl = getImageUrl(imageFileName);
     }
 
-    const newPost: NewTravelPost = {
+    const postData: NewTravelPost = {
       title,
       location,
       description,
-      image: getImageUrl(imageFileName),
+      image: imageUrl,
       date: date,
       expence_euro: Number(expenceEuro),
       economic_effort: Number(economicEffort),
@@ -111,9 +147,14 @@ export default function AddPostPage() {
       tags,
     };
 
-    const { error } = await supabase
-      .from("japan_travel_posts")
-      .insert([newPost]);
+    const { error } = isEditMode
+      ? await supabase
+          .from("japan_travel_posts")
+          .update(postData)
+          .eq("id", numericId)
+      : await supabase
+          .from("japan_travel_posts")
+          .insert([postData]);
 
     if (error) {
       console.error("Errore nel salvataggio:", error.message);
@@ -138,9 +179,21 @@ export default function AddPostPage() {
     setNegativeReflection("");
     setTags([]);
 
-    // torno alla home
-    navigate("/");
+    // torno al dettaglio se sto modificando, altrimenti alla home
+    navigate(isEditMode && numericId ? `/details/${numericId}` : "/");
   };
+
+  if (isEditMode && !postToEdit) {
+    return (
+      <div className="container pt-5">
+        <p className="text-light">
+          {posts.length === 0
+            ? "Caricamento post..."
+            : "Post non trovato o dati non disponibili"}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -151,10 +204,12 @@ export default function AddPostPage() {
             style={{ right: "calc(100% + 20px)", top: "4px", whiteSpace: "nowrap" }}
             onClick={() => navigate(-1)}
           >← Indietro</button>
-          <h1 className="text-light mb-0">Aggiungi post</h1>
+          <h1 className="text-light mb-0">
+            {isEditMode ? "Modifica post" : "Aggiungi post"}
+          </h1>
         </div>
         <div className="glass-box">
-          <form action="">
+          <form onSubmit={handleSave}>
             <div className="d-flex gap-3">
               <div className="d-flex flex-column w-100">
                 <span className="text-light mb-1">Inseirisci il titolo</span>
@@ -209,12 +264,17 @@ export default function AddPostPage() {
                   onChange={handleImageChange}
                   id="image"
                   className={`form-control text-bg-dark mb-1 ${
-                    formSubmitted && !imageFile ? "is-invalid" : ""
+                    formSubmitted && !isEditMode && !imageFile ? "is-invalid" : ""
                   }`}
-                  required
+                  required={!isEditMode}
                 />
                 {imageFileName && (
                   <small className="text-secondary mb-2">Nome file: {imageFileName}</small>
+                )}
+                {isEditMode && !imageFileName && postToEdit?.image && (
+                  <small className="text-secondary mb-2">
+                    Immagine attuale mantenuta se non ne carichi una nuova.
+                  </small>
                 )}
               </div>
               <div className="d-flex flex-column w-100">
@@ -407,15 +467,17 @@ export default function AddPostPage() {
                 ))}
               </div>
             </div>
+            <div className="d-flex gap-3">
+              <button type="submit" className="btn btn-success">
+                {isEditMode ? "Aggiorna post" : "Salva post"}
+              </button>
+              <Link to={isEditMode && numericId ? `/details/${numericId}` : "/"}>
+                <button type="button" className="btn btn-secondary">
+                  Annulla
+                </button>
+              </Link>
+            </div>
           </form>
-          <div className="d-flex gap-3">
-            <button className="btn btn-success" onClick={handleSave}>
-              Salva post
-            </button>
-            <Link to={"/"}>
-              <button className="btn btn-secondary">Annulla</button>
-            </Link>
-          </div>
         </div>
       </div>
     </>
