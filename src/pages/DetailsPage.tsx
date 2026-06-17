@@ -25,7 +25,14 @@ export default function DetailsPage() {
   const locationDetails = posts.find((post) => post.id === numericId);
 
   if (!locationDetails) {
-    return <p>Post non trovato o dati non disponibili</p>;
+    return (
+      <main className="app-shell">
+        <div className="app-panel empty-state">
+          <h2>Post non trovato</h2>
+          <p>I dati potrebbero essere ancora in caricamento.</p>
+        </div>
+      </main>
+    );
   }
 
   // Funzione per eliminare un post
@@ -48,17 +55,43 @@ export default function DetailsPage() {
 
   return (
     <>
-      <div className="container">
-        <div className="position-relative mt-5 mb-5">
-          <button
-            className="btn btn-primary position-absolute"
-            style={{ right: "calc(100% + 20px)", top: "4px", whiteSpace: "nowrap" }}
-            onClick={() => navigate("/")}
-          >← Indietro</button>
-          <h1 className="text-light mb-0">Pagina di dettaglio</h1>
-        </div>
-        <div className="text-center">
-          {/* Immagine */}
+      <main className="app-shell">
+        <section className="app-hero">
+          <div>
+            <p className="app-kicker">Dettaglio viaggio</p>
+            <h1 className="app-title">{locationDetails.title}</h1>
+            <div className="detail-meta">
+              <span className="meta-pill">{locationDetails.location}</span>
+              <span className="meta-pill">{formatDate(locationDetails.date)}</span>
+              <span className="meta-pill">
+                {humorIcons[locationDetails.humor]} {locationDetails.humor}
+              </span>
+            </div>
+          </div>
+
+          <div className="app-actions">
+            <button className="btn-app-secondary" onClick={() => navigate("/")}>
+              Indietro
+            </button>
+            <button
+              type="button"
+              className="btn-app-warning"
+              onClick={() => navigate(`/editPost/${numericId}`)}
+            >
+              Modifica
+            </button>
+            <button
+              type="button"
+              className="btn-app-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#deletePostModal"
+            >
+              Elimina
+            </button>
+          </div>
+        </section>
+
+        <section className="detail-layout">
           <div>
             <img
               className="img-detail"
@@ -66,75 +99,47 @@ export default function DetailsPage() {
               alt={locationDetails.title}
             />
           </div>
-          <div className="text-start glass-box mt-5 mb-5">
-            {/* Titolo */}
-            <div className="d-flex justify-content-between">
-              <h2>{locationDetails.title}</h2>
 
-              <div className="d-flex gap-2">
-                {/* Bottone per modificare il post */}
-                <button
-                  type="button"
-                  className="btn btn-primary rounded-3"
-                  onClick={() => navigate(`/editPost/${numericId}`)}
-                >
-                  Modifica
-                </button>
-
-                {/* Bottone per eliminare il post */}
-                <button
-                  type="button"
-                  className="btn btn-danger rounded-3"
-                  data-bs-toggle="modal"
-                  data-bs-target="#deletePostModal"
-                >
-                  Elimina
-                </button>
-              </div>
-            </div>
-            {/* Luogo e Data */}
-            <div className="d-flex align-items-center gap-5">
-              <p>Luogo: {locationDetails.location}</p>
-              <p>Data: {formatDate(locationDetails.date)}</p>
+          <article className="app-panel">
+            <div className="detail-section mt-0 pt-0 border-0">
+              <h3>Descrizione</h3>
+              <p>{locationDetails.description}</p>
             </div>
 
-            {/* Descrizione */}
-            <p>Descrizione: {locationDetails.description}</p>
-
-            {/* Riflessione positiva e negativa */}
-            <div className="d-flex align-items-center gap-5">
-              <p>Riflessione positiva: {locationDetails.positive_reflection}</p>
-              <p>Riflessione negativa: {locationDetails.negative_reflection}</p>
-            </div>
-
-            {/* Effort economico e costo */}
-            <div className="d-flex align-items-center gap-5">
-              <p>Effort economico: {locationDetails.economic_effort}/5</p>
+            <div className="detail-section">
+              <h3>Riflessioni</h3>
               <p>
-                Costo: {expenceTagsColor(locationDetails.expence_euro ?? 0)}
+                <strong>Momento positivo:</strong>{" "}
+                {locationDetails.positive_reflection}
+              </p>
+              <p>
+                <strong>Da ricordare:</strong>{" "}
+                {locationDetails.negative_reflection}
               </p>
             </div>
 
-            <div className="d-flex align-items-center gap-5">
-              {/* Umore e impergno fisico */}
-              <div className="d-flex">
-                <p className="me-2">Umore:</p>
-                <p className="badge text-bg-primary">
-                  {humorIcons[locationDetails.humor]} {locationDetails.humor}
-                </p>
+            <div className="detail-section">
+              <h3>Impegno e costo</h3>
+              <div className="d-flex flex-wrap align-items-center gap-3">
+                <span className="meta-pill">
+                  Effort economico: {locationDetails.economic_effort}/5
+                </span>
+                <span className="meta-pill">
+                  Impegno fisico: {locationDetails.physical_commitment}/5
+                </span>
+                <span>{expenceTagsColor(locationDetails.expence_euro ?? 0)}</span>
               </div>
-              <p>Impegno fisico: {locationDetails.physical_commitment}/5</p>
             </div>
 
-            {/* tags */}
-            <div className="d-flex align-items-center">
-              <p>Tags: {renderTags(locationDetails.tags)}</p>
+            <div className="detail-section">
+              <h3>Tag</h3>
+              <div>{renderTags(locationDetails.tags)}</div>
             </div>
-          </div>
-        </div>
-      </div>
+          </article>
+        </section>
+      </main>
 
-      {/* Moodale di conferma eliminazione */}
+      {/* Modale di conferma eliminazione */}
       <DeletePostModal
         postId={numericId}
         onConfirm={handleDelete}

@@ -4,13 +4,261 @@ body {
   background-image: url("https://4kwallpapers.com/images/wallpapers/tokyo-tower-japan-metal-structure-cityscape-city-lights-3840x2160-3672.jpg") !important;
   min-height: 100vh;
   background-size: cover !important;
-
   background-repeat: no-repeat !important;
   background-position: center center !important;
+  background-attachment: fixed;
+  color: #f8fafc;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(120deg, rgba(3, 7, 18, 0.94), rgba(8, 47, 73, 0.72)),
+    radial-gradient(circle at 75% 15%, rgba(59, 130, 246, 0.28), transparent 34%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.app-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 28px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.18);
+}
+
+.app-kicker {
+  margin-bottom: 8px;
+  color: #bfdbfe;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.app-title {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.app-subtitle {
+  max-width: 650px;
+  margin: 14px 0 0;
+  color: #cbd5e1;
+  font-size: 1rem;
+}
+
+.app-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-app-primary,
+.btn-app-secondary,
+.btn-app-danger,
+.btn-app-warning {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-weight: 800;
+  color: #f8fafc;
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.24);
+}
+
+.btn-app-primary {
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+}
+
+.btn-app-secondary {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(226, 232, 240, 0.16);
+}
+
+.btn-app-danger {
+  background: linear-gradient(135deg, #fb7185, #dc2626);
+}
+
+.btn-app-warning {
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  color: #111827;
+}
+
+.app-panel,
+.glass-box {
+  background: rgba(15, 23, 42, 0.68);
+  border: 1px solid rgba(226, 232, 240, 0.16);
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(2, 6, 23, 0.34);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: #f8fafc;
+}
+
+.app-panel {
+  padding: 22px;
+}
+
+.toolbar-panel {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.toolbar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.filter-label {
+  color: #cbd5e1;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.active-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 22px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(226, 232, 240, 0.16);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #f8fafc;
+  cursor: pointer;
+}
+
+.post-card-shell {
+  height: 100%;
+  border: 1px solid rgba(226, 232, 240, 0.16);
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.68);
+  box-shadow: 0 18px 54px rgba(2, 6, 23, 0.28);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.post-card-shell:hover {
+  transform: translateY(-4px);
+  border-color: rgba(147, 197, 253, 0.58);
+}
+
+.empty-state {
+  padding: 54px 20px;
+  text-align: center;
+}
+
+.empty-state h2 {
+  margin-bottom: 10px;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 22px;
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(96, 165, 250, 0.14);
+  color: #dbeafe;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.detail-section {
+  padding-top: 18px;
+  margin-top: 18px;
+  border-top: 1px solid rgba(226, 232, 240, 0.14);
+}
+
+.detail-section h3 {
+  margin-bottom: 10px;
+  color: #bfdbfe;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.detail-section p {
+  color: #e2e8f0;
+  line-height: 1.7;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.form-control,
+.form-select {
+  border-color: rgba(226, 232, 240, 0.14);
+  border-radius: 14px;
 }
 
 .card {
   overflow: hidden;
+  border: 0;
+  border-radius: 22px;
 }
 
 .card img {
@@ -25,28 +273,48 @@ body {
 
 .post-img {
   object-fit: cover;
-  height: 250px;
+  height: 280px;
 }
 
 .card-text {
-  text-shadow: 1px 1px 2px black, 1px 1px 1em black, 1px 1px 1.2em blue;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8);
 }
 
 .img-detail {
   width: 100%;
-  border-radius: 20px;
+  max-height: 640px;
+  object-fit: cover;
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(2, 6, 23, 0.34);
 }
 
 .glass-box {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  padding: 24px;
 }
 
 .is-invalid {
   border: 2px solid red;
+}
+
+@media (max-width: 900px) {
+  .app-hero,
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .app-actions {
+    justify-content: flex-start;
+  }
+
+  .toolbar-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }

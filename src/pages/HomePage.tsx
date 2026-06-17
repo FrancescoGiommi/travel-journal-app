@@ -61,7 +61,7 @@ export default function HomePage() {
 
   // Funzione per aggiungere un tag
   const addTag = (tag: string) => {
-    if (!selectedTags.includes(tag)) {
+    if (tag && !selectedTags.includes(tag)) {
       setSelectedTags((prevTag) => [...prevTag, tag]);
     }
   };
@@ -99,234 +99,254 @@ export default function HomePage() {
 
   // Quante pagine totali
   const totalPages = Math.ceil(orderedPosts.length / postsPerPage);
+  const activeFilterCount =
+    (searchText.trim() ? 1 : 0) +
+    (filterHumor ? 1 : 0) +
+    selectedTags.length;
+
+  const resetFilters = () => {
+    setSearchBar("");
+    setSearchText("");
+    setFilterHumor("");
+    setSelectedTags([]);
+    setSortBy(null);
+    setCurrentPage(1);
+  };
 
   return (
-    <>
-      <h1 className="ms-5 pt-5 pb-3 text-light text-center">
-        Diario di viaggio
-      </h1>
-      <div className="container">
-        <div className="d-flex justify-content-between mb-2">
-          <h2 className="text-light">Viaggio in Giappone</h2>
-
-          {/* Bottone per aggiungere un post */}
-          <div className="d-flex flex-column">
-            <Link to={"/addPost"}>
-              <button className="btn btn-primary mb-2">Aggiungi post</button>
-            </Link>
-            <button
-              className="btn btn-primary rounded-3"
-              onClick={() => setShowSearchMenu(!showSearchMenu)}
-            >
-              {showSearchMenu ? "Nascondi ricerca" : "Cerca/ordina post"}
-            </button>
-          </div>
+    <main className="app-shell">
+      <section className="app-hero">
+        <div>
+          <p className="app-kicker">Diario di viaggio</p>
+          <h1 className="app-title">Viaggio in Giappone</h1>
+          <p className="app-subtitle">
+            Luoghi, stati d'animo, spese e riflessioni raccolti in un diario
+            visivo da esplorare con filtri rapidi.
+          </p>
         </div>
-        {showSearchMenu && (
-          <>
-            <div className="d-flex justify-content-around mb-2 gap-3">
-              <div className="d-flex flex-column w-100">
-                <span className="text-light mb-1">Filtra per testo</span>
-
-                {/* Input filtro per testo */}
-                <input
-                  className="form-control text-bg-dark"
-                  type="text"
-                  value={searchText}
-                  onChange={(e) => {
-                    setSearchText(e.target.value);
-                    debouncedSearch(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="d-flex flex-column w-100">
-                <span className="text-light mb-1">
-                  Filtra per stato d'animo
-                </span>
-
-                {/* Select filtro per stato d'animo */}
-                <select
-                  value={filterHumor}
-                  onChange={(e) => {
-                    setFilterHumor(e.target.value);
-                  }}
-                  className="form-select text-bg-dark"
-                  aria-label="Default select example"
-                >
-                  <option value="">Seleziona un opzione</option>
-                  {Object.entries(humorIcons).map(([key, icon]) => (
-                    <option key={key} value={key}>
-                      {icon} {key}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="d-flex justify-content-between">
-              <div className="d-flex flex-column w-100">
-                <span className="text-light mb-1">Filtra per Tags</span>
-
-                {/* Select filtro per tags */}
-                <select
-                  value=""
-                  onChange={(e) => {
-                    addTag(e.target.value);
-                  }}
-                  className="form-select text-bg-dark mb-2"
-                  aria-label="Default select example"
-                >
-                  <option value="">Seleziona tag</option>
-                  {Object.entries(tagStyles).map(([key, { icon }]) => (
-                    <option key={key} value={key}>
-                      {icon}
-
-                      {key}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Bottone per cambiare ordine in base al prezzo */}
-            <div className="d-flex justify-content- around mb-2">
-              <button
-                className="btn btn-primary me-2"
-                onClick={() => {
-                  setSortBy("expence");
-                  setSortOrderExpense((prev) =>
-                    prev === "asc" ? "desc" : "asc"
-                  );
-                }}
-              >
-                Ordina per Prezzo:{" "}
-                {sortOrderExpense === "asc" ? (
-                  <>
-                    <span className="badge text-bg-success">€</span>
-                    {" → "}
-                    <span className="badge text-bg-warning">€€</span>
-                    {" → "}
-                    <span className="badge text-bg-danger">€€€</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="badge text-bg-danger">€€€</span>
-                    {" → "}
-                    <span className="badge text-bg-warning">€€</span>
-                    {" → "}
-                    <span className="badge text-bg-success">€</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  setSortBy("date");
-                  setSortOrderDate((prev) => (prev === "asc" ? "desc" : "asc"));
-                }}
-              >
-                Ordina per Data:{" "}
-                {sortOrderDate === "asc" ? "Meno recente" : "Più recente"}
-              </button>
-            </div>
-          </>
-        )}
-
-        {/* Mostra i tags selezionati */}
-        {selectedTags.map((tag) => {
-          const style = tagStyles[tag];
-          return (
-            <span
-              key={tag}
-              className={`btn btn-primary text-bg-${style.color} me-2 mt-2 mb-2`}
-              onClick={() => removeTag(tag)}
-            >
-              {style.icon} {tag} X
-            </span>
-          );
-        })}
-
-        <div className="row justify-content-center">
-          {currentPosts.length === 0 ? (
-            <p className="text-light text-center fs-1 mt-3">
-              Nessun post trovato
-            </p>
-          ) : (
-            currentPosts.map((post) => (
-              <div
-                key={post.id}
-                className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
-              >
-                <div className="card h-100">
-                  <Link
-                    to={`/details/${post.id}`}
-                    className="text-decoration-none text-dark"
-                  >
-                    <PostCard
-                      image={post.image}
-                      title={post.title}
-                      tags={post.tags}
-                      renderTags={renderTags}
-                      humor={post.humor}
-                      humorIcons={humorIcons}
-                      expence_euro={post.expence_euro}
-                      expenceTagsColor={expenceTagsColor}
-                    />
-                  </Link>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Paginazione */}
-        {totalPages > 1 && (
-          <nav
-            aria-label="Page navigation"
-            className="d-flex justify-content-center"
+        <div className="app-actions">
+          <button
+            className="btn-app-secondary"
+            onClick={() => setShowSearchMenu(!showSearchMenu)}
           >
-            <ul className="pagination">
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+            {showSearchMenu ? "Nascondi filtri" : "Filtra e ordina"}
+          </button>
+          <Link to={"/addPost"}>
+            <button className="btn-app-primary">Aggiungi post</button>
+          </Link>
+        </div>
+      </section>
+
+      {showSearchMenu && (
+        <section className="app-panel toolbar-panel">
+          <div className="toolbar-grid">
+            <div className="d-flex flex-column">
+              <span className="filter-label mb-2">Cerca per titolo</span>
+              <input
+                className="form-control text-bg-dark"
+                type="text"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                  debouncedSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Es. Kyoto, tempio, Osaka..."
+              />
+            </div>
+
+            <div className="d-flex flex-column">
+              <span className="filter-label mb-2">Stato d'animo</span>
+              <select
+                value={filterHumor}
+                onChange={(e) => {
+                  setFilterHumor(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="form-select text-bg-dark"
+                aria-label="Filtra per stato d'animo"
               >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
-                >
-                  Previous
-                </button>
-              </li>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <li
-                  key={i}
-                  className={`page-item ${
-                    currentPage === i + 1 ? "active" : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                </li>
+                <option value="">Tutti gli stati d'animo</option>
+                {Object.entries(humorIcons).map(([key, icon]) => (
+                  <option key={key} value={key}>
+                    {icon} {key}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="d-flex flex-column">
+            <span className="filter-label mb-2">Tag</span>
+            <select
+              value=""
+              onChange={(e) => {
+                addTag(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="form-select text-bg-dark"
+              aria-label="Filtra per tag"
+            >
+              <option value="">Aggiungi un tag</option>
+              {Object.entries(tagStyles).map(([key, { icon }]) => (
+                <option key={key} value={key}>
+                  {icon} {key}
+                </option>
               ))}
+            </select>
+          </div>
+
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn-app-secondary"
+              onClick={() => {
+                setSortBy("expence");
+                setSortOrderExpense((prev) =>
+                  prev === "asc" ? "desc" : "asc"
+                );
+              }}
+            >
+              Prezzo: {sortOrderExpense === "asc" ? "crescente" : "decrescente"}
+            </button>
+
+            <button
+              className="btn-app-secondary"
+              onClick={() => {
+                setSortBy("date");
+                setSortOrderDate((prev) => (prev === "asc" ? "desc" : "asc"));
+              }}
+            >
+              Data: {sortOrderDate === "asc" ? "meno recente" : "piu recente"}
+            </button>
+
+            {activeFilterCount > 0 && (
+              <button className="btn-app-secondary" onClick={resetFilters}>
+                Reimposta filtri
+              </button>
+            )}
+          </div>
+        </section>
+      )}
+
+      {(searchText || filterHumor || selectedTags.length > 0) && (
+        <div className="active-filter-row">
+          {searchText && (
+            <button
+              className="filter-chip"
+              onClick={() => {
+                setSearchText("");
+                setSearchBar("");
+              }}
+            >
+              Titolo: {searchText} x
+            </button>
+          )}
+          {filterHumor && (
+            <button className="filter-chip" onClick={() => setFilterHumor("")}>
+              Umore: {filterHumor} x
+            </button>
+          )}
+          {selectedTags.map((tag) => {
+            const style = tagStyles[tag];
+            return (
+              <button
+                key={tag}
+                className="filter-chip"
+                onClick={() => removeTag(tag)}
+              >
+                {style.icon} {tag} x
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <section className="row justify-content-center">
+        {currentPosts.length === 0 ? (
+          <div className="col-12">
+            <div className="app-panel empty-state">
+              <h2>Nessun luogo trovato</h2>
+              <p>
+                Prova a rimuovere qualche filtro o aggiungi un nuovo ricordo al
+                diario.
+              </p>
+            </div>
+          </div>
+        ) : (
+          currentPosts.map((post) => (
+            <div
+              key={post.id}
+              className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
+            >
+              <div className="post-card-shell">
+                <Link
+                  to={`/details/${post.id}`}
+                  className="text-decoration-none text-dark"
+                >
+                  <PostCard
+                    image={post.image}
+                    title={post.title}
+                    tags={post.tags}
+                    renderTags={renderTags}
+                    humor={post.humor}
+                    humorIcons={humorIcons}
+                    expence_euro={post.expence_euro}
+                    expenceTagsColor={expenceTagsColor}
+                  />
+                </Link>
+              </div>
+            </div>
+          ))
+        )}
+      </section>
+
+      {/* Paginazione */}
+      {totalPages > 1 && (
+        <nav
+          aria-label="Page navigation"
+          className="d-flex justify-content-center"
+        >
+          <ul className="pagination">
+            <li
+              className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                Previous
+              </button>
+            </li>
+            {Array.from({ length: totalPages }, (_, i) => (
               <li
+                key={i}
                 className={`page-item ${
-                  currentPage === totalPages ? "disabled" : ""
+                  currentPage === i + 1 ? "active" : ""
                 }`}
               >
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  onClick={() => setCurrentPage(i + 1)}
                 >
-                  Next
+                  {i + 1}
                 </button>
               </li>
-            </ul>
-          </nav>
-        )}
-      </div>
-    </>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
+    </main>
   );
 }

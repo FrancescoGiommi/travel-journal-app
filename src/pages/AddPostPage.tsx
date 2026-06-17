@@ -198,18 +198,17 @@ export default function AddPostPage() {
   }
 
   return (
-    <>
-      <div className="container pt-5">
-        <div className="position-relative mb-5">
+    <main className="app-shell">
+        <section className="app-hero">
           <button
-            className="btn btn-primary position-absolute"
-            style={{ right: "calc(100% + 20px)", top: "4px", whiteSpace: "nowrap" }}
+            className="btn-app-secondary"
+            style={{ whiteSpace: "nowrap" }}
             onClick={() => navigate(-1)}
           >← Indietro</button>
-          <h1 className="text-light mb-0">
+          <h1 className="app-title">
             {isEditMode ? "Modifica post" : "Aggiungi post"}
           </h1>
-        </div>
+        </section>
         <div className="glass-box">
           <form onSubmit={handleSave}>
             <div className="d-flex gap-3">
@@ -469,19 +468,18 @@ export default function AddPostPage() {
                 ))}
               </div>
             </div>
-            <div className="d-flex gap-3">
-              <button type="submit" className="btn btn-success">
+            <div className="form-actions">
+              <button type="submit" className="btn-app-primary">
                 {isEditMode ? "Aggiorna post" : "Salva post"}
               </button>
               <Link to={isEditMode && numericId ? `/details/${numericId}` : "/"}>
-                <button type="button" className="btn btn-secondary">
+                <button type="button" className="btn-app-secondary">
                   Annulla
                 </button>
               </Link>
             </div>
           </form>
         </div>
-      </div>
-    </>
+    </main>
   );
 }
