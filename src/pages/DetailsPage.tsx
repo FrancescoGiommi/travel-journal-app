@@ -75,7 +75,7 @@ export default function DetailsPage() {
                 {/* Bottone per modificare il post */}
                 <button
                   type="button"
-                  className="btn btn-warning rounded-3"
+                  className="btn btn-primary rounded-3"
                   onClick={() => navigate(`/editPost/${numericId}`)}
                 >
                   Modifica
