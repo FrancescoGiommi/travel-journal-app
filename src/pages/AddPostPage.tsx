@@ -105,7 +105,7 @@ export default function AddPostPage() {
       !description ||
       (!isEditMode && !imageFile) ||
       !date ||
-      !expenceEuro ||
+      expenceEuro === "" ||
       !economicEffort ||
       !physicalCommitment ||
       !humor ||
@@ -300,10 +300,14 @@ export default function AddPostPage() {
               <input
                 type="number"
                 value={expenceEuro}
-                onChange={(e) => setExpenseEuro(Number(e.target.value))}
+                onChange={(e) =>
+                  setExpenseEuro(
+                    e.target.value === "" ? "" : Number(e.target.value)
+                  )
+                }
                 id="expense_euro"
                 className={`form-control text-bg-dark mb-3 ${
-                  formSubmitted && !expenceEuro ? "is-invalid" : ""
+                  formSubmitted && expenceEuro === "" ? "is-invalid" : ""
                 }`}
                 required
               />
