@@ -134,7 +134,8 @@ export default function DetailsPage() {
                 <span className="meta-pill">
                   Impegno fisico: {locationDetails.physical_commitment}/5
                 </span>
-                <span>
+                <span className="meta-pill price-meta-pill">
+                  Costo:
                   {expenceTagsColor(locationDetails.expence_euro ?? 0)}
                 </span>
               </div>

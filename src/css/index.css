@@ -212,12 +212,24 @@ select {
 .meta-pill {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   border-radius: 999px;
   padding: 8px 12px;
   background: rgba(96, 165, 250, 0.14);
   color: #dbeafe;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.price-meta-pill {
+  padding-right: 10px;
+}
+
+.price-meta-pill .badge {
+  border-radius: 999px;
+  padding: 5px 10px;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .detail-section {
