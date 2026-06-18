@@ -33,11 +33,13 @@ export default function PostCard({
         </div>
         <div className="d-flex justify-content-between">
           <span>{renderTags(tags)}</span>
-          {humor && (
-            <span className="badge text-bg-primary">
-              {humorIcons[humor]} {humor}
-            </span>
-          )}
+          <div>
+            {humor && (
+              <span className="badge text-bg-primary">
+                {humorIcons[humor]} {humor}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
