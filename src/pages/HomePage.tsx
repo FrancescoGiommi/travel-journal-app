@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 
 import PostCard from "../components/PostCard";
@@ -18,6 +18,8 @@ function debounce<T>(callback: (value: T) => void, delay: number) {
 export default function HomePage() {
   const { posts, renderTags, humorIcons, expenceTagsColor, tagStyles } =
     useGlobalContext();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageFromUrl = Number(searchParams.get("page")) || 1;
 
   // Stati per la ricerca e i filtri
   const [searchBar, setSearchBar] = useState("");
@@ -30,8 +32,15 @@ export default function HomePage() {
   );
   const [sortOrderDate, setSortOrderDate] = useState<"asc" | "desc">("asc");
   const [sortBy, setSortBy] = useState<"expence" | "date" | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
   const postsPerPage = 9;
+
+  const goToPage = (page: number) => {
+    const nextPage = Math.max(1, page);
+
+    setCurrentPage(nextPage);
+    setSearchParams(nextPage === 1 ? {} : { page: String(nextPage) });
+  };
 
   const filterByTextAndHumorAndTags = posts.filter((post) => {
     const matchesText = post.title
@@ -110,7 +119,7 @@ export default function HomePage() {
     setFilterHumor("");
     setSelectedTags([]);
     setSortBy(null);
-    setCurrentPage(1);
+    goToPage(1);
   };
 
   return (
@@ -149,7 +158,7 @@ export default function HomePage() {
                 onChange={(e) => {
                   setSearchText(e.target.value);
                   debouncedSearch(e.target.value);
-                  setCurrentPage(1);
+                  goToPage(1);
                 }}
                 placeholder="Es. Kyoto, tempio, Osaka..."
               />
@@ -161,7 +170,7 @@ export default function HomePage() {
                 value={filterHumor}
                 onChange={(e) => {
                   setFilterHumor(e.target.value);
-                  setCurrentPage(1);
+                  goToPage(1);
                 }}
                 className="form-select text-bg-dark"
                 aria-label="Filtra per stato d'animo"
@@ -182,7 +191,7 @@ export default function HomePage() {
               value=""
               onChange={(e) => {
                 addTag(e.target.value);
-                setCurrentPage(1);
+                goToPage(1);
               }}
               className="form-select text-bg-dark"
               aria-label="Filtra per tag"
@@ -281,6 +290,7 @@ export default function HomePage() {
               <div className="post-card-shell">
                 <Link
                   to={`/details/${post.id}`}
+                  state={{ from: currentPage === 1 ? "/" : `/?page=${currentPage}` }}
                   className="text-decoration-none text-dark"
                 >
                   <PostCard
@@ -310,10 +320,10 @@ export default function HomePage() {
             <li
               className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
             >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
+                <button
+                  className="page-link"
+                  onClick={() => goToPage(currentPage - 1)}
+                >
                 Previous
               </button>
             </li>
@@ -326,7 +336,7 @@ export default function HomePage() {
               >
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage(i + 1)}
+                  onClick={() => goToPage(i + 1)}
                 >
                   {i + 1}
                 </button>
@@ -337,10 +347,10 @@ export default function HomePage() {
                 currentPage === totalPages ? "disabled" : ""
               }`}
             >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
+                <button
+                  className="page-link"
+                  onClick={() => goToPage(currentPage + 1)}
+                >
                 Next
               </button>
             </li>

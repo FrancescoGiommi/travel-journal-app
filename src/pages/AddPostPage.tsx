@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import Select from "react-select";
 import type { NewTravelPost } from "../../types";
 import { supabase } from "../../supabase/supabaseClient";
@@ -7,7 +7,10 @@ import { useGlobalContext } from "../context/GlobalContext";
 
 export default function AddPostPage() {
   const navigate = useNavigate();
+  const routeLocation = useLocation();
   const { id } = useParams<{ id: string }>();
+  const backPath =
+    (routeLocation.state as { from?: string } | null)?.from ?? "/";
 
   const { humorIcons, fetchPosts, tagStyles, posts } = useGlobalContext();
 
@@ -182,6 +185,7 @@ export default function AddPostPage() {
     // torno al dettaglio se sto modificando, altrimenti alla home
     navigate(isEditMode && numericId ? `/details/${numericId}` : "/", {
       replace: isEditMode,
+      state: isEditMode ? { from: backPath } : undefined,
     });
   };
 
@@ -476,7 +480,10 @@ export default function AddPostPage() {
               <button type="submit" className="btn-app-primary">
                 {isEditMode ? "Aggiorna post" : "Salva post"}
               </button>
-              <Link to={isEditMode && numericId ? `/details/${numericId}` : "/"}>
+              <Link
+                to={isEditMode && numericId ? `/details/${numericId}` : "/"}
+                state={isEditMode ? { from: backPath } : undefined}
+              >
                 <button type="button" className="btn-app-secondary">
                   Annulla
                 </button>

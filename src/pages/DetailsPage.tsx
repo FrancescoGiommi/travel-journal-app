@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 import { supabase } from "../../supabase/supabaseClient";
 import DeletePostModal from "../components/DeletePostModal";
@@ -7,6 +7,9 @@ export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const backPath =
+    (location.state as { from?: string } | null)?.from ?? "/";
 
   const {
     fetchPosts,
@@ -63,13 +66,15 @@ export default function DetailsPage() {
           </div>
 
           <div className="app-actions">
-            <button className="btn-app-secondary" onClick={() => navigate("/")}>
+            <button className="btn-app-secondary" onClick={() => navigate(backPath)}>
               Indietro
             </button>
             <button
               type="button"
               className="btn-app-warning"
-              onClick={() => navigate(`/editPost/${numericId}`)}
+              onClick={() =>
+                navigate(`/editPost/${numericId}`, { state: { from: backPath } })
+              }
             >
               Modifica
             </button>
