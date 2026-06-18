@@ -38,9 +38,9 @@ select {
 }
 
 .app-hero {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 24px;
   padding-bottom: 28px;
   margin-bottom: 28px;
@@ -63,6 +63,7 @@ select {
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .app-subtitle {
@@ -74,10 +75,11 @@ select {
 
 .app-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
+  white-space: nowrap;
 }
 
 .btn-app-primary,
@@ -326,11 +328,12 @@ select {
 
   .app-hero {
     align-items: flex-start;
-    flex-direction: column;
   }
 
   .app-actions {
+    flex-wrap: wrap;
     justify-content: flex-start;
+    white-space: normal;
   }
 
   .toolbar-grid,
