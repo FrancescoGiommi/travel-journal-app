@@ -24,8 +24,8 @@ export default function AddPostPage() {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageFileName, setImageFileName] = useState("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imageFileNames, setImageFileNames] = useState<string[]>([]);
   const [date, setDate] = useState("");
   const [expenceEuro, setExpenseEuro] = useState<number | "">("");
   const [economicEffort, setEconomicEffort] = useState<number | "">("");
@@ -74,14 +74,13 @@ export default function AddPostPage() {
 
   // Gestisce la selezione del file immagine
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    if (file) {
-      const formatted = formatFileName(file.name);
-      setImageFile(file);
-      setImageFileName(formatted);
+    const files = Array.from(e.target.files ?? []);
+    if (files.length > 0) {
+      setImageFiles(files);
+      setImageFileNames(files.map((file) => formatFileName(file.name)));
     } else {
-      setImageFile(null);
-      setImageFileName("");
+      setImageFiles([]);
+      setImageFileNames([]);
     }
   };
 
@@ -106,7 +105,7 @@ export default function AddPostPage() {
       !title ||
       !location ||
       !description ||
-      (!isEditMode && !imageFile) ||
+      (!isEditMode && imageFiles.length === 0) ||
       !date ||
       expenceEuro === "" ||
       !economicEffort ||
@@ -120,19 +119,27 @@ export default function AddPostPage() {
     }
 
     let imageUrl = postToEdit?.image ?? "";
+    const uploadedImageUrls: string[] = [];
 
-    if (imageFile) {
+    if (imageFiles.length > 0) {
       // Carica l'immagine su Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from("travel_images")
-        .upload(imageFileName, imageFile);
+      for (const [index, file] of imageFiles.entries()) {
+        const fileName = imageFileNames[index];
+        const { error: uploadError } = await supabase.storage
+          .from("travel_images")
+          .upload(fileName, file);
 
-      if (uploadError) {
-        console.error("Errore nel caricamento dell'immagine:", uploadError.message);
-        return;
+        if (uploadError) {
+          console.error("Errore nel caricamento dell'immagine:", uploadError.message);
+          return;
+        }
+
+        uploadedImageUrls.push(getImageUrl(fileName));
       }
 
-      imageUrl = getImageUrl(imageFileName);
+      if (!isEditMode || !imageUrl) {
+        imageUrl = uploadedImageUrls[0];
+      }
     }
 
     const postData: NewTravelPost = {
@@ -150,18 +157,50 @@ export default function AddPostPage() {
       tags,
     };
 
-    const { error } = isEditMode
+    let savedPostId = numericId;
+    const { data: savedPost, error } = isEditMode
       ? await supabase
           .from("japan_travel_posts")
           .update(postData)
           .eq("id", numericId)
+          .select("id")
+          .single()
       : await supabase
           .from("japan_travel_posts")
-          .insert([postData]);
+          .insert([postData])
+          .select("id")
+          .single();
 
     if (error) {
       console.error("Errore nel salvataggio:", error.message);
       return;
+    }
+
+    savedPostId = savedPost?.id ?? savedPostId;
+
+    if (savedPostId && uploadedImageUrls.length > 0) {
+      const startPosition =
+        postToEdit?.post_images?.length ?? (postToEdit?.image ? 1 : 0);
+      const hasExistingCover =
+        isEditMode &&
+        ((postToEdit?.post_images?.some((image) => image.is_cover) ?? false) ||
+          Boolean(postToEdit?.image));
+
+      const imageRows = uploadedImageUrls.map((image_url, index) => ({
+        post_id: savedPostId,
+        image_url,
+        position: startPosition + index,
+        is_cover: !hasExistingCover && index === 0,
+      }));
+
+      const { error: imageInsertError } = await supabase
+        .from("post_images")
+        .insert(imageRows);
+
+      if (imageInsertError) {
+        console.error("Errore nel salvataggio delle immagini:", imageInsertError.message);
+        return;
+      }
     }
 
     // Aggiorna i post nella home
@@ -171,8 +210,8 @@ export default function AddPostPage() {
     setTitle("");
     setLocation("");
     setDescription("");
-    setImageFile(null);
-    setImageFileName("");
+    setImageFiles([]);
+    setImageFileNames([]);
     setDate("");
     setExpenseEuro("");
     setEconomicEffort("");
@@ -262,23 +301,26 @@ export default function AddPostPage() {
             <div className="d-flex gap-3 mb-3">
               <div className="d-flex flex-column w-100">
                 {/* Immagine */}
-                <span className="text-light mb-1">Carica un'immagine</span>
+                <span className="text-light mb-1">Carica una o piu immagini</span>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={handleImageChange}
                   id="image"
                   className={`form-control text-bg-dark mb-1 ${
-                    formSubmitted && !isEditMode && !imageFile ? "is-invalid" : ""
+                    formSubmitted && !isEditMode && imageFiles.length === 0 ? "is-invalid" : ""
                   }`}
                   required={!isEditMode}
                 />
-                {imageFileName && (
-                  <small className="text-secondary mb-2">Nome file: {imageFileName}</small>
-                )}
-                {isEditMode && !imageFileName && postToEdit?.image && (
+                {imageFileNames.length > 0 && (
                   <small className="text-secondary mb-2">
-                    Immagine attuale mantenuta se non ne carichi una nuova.
+                    File selezionati: {imageFileNames.join(", ")}
+                  </small>
+                )}
+                {isEditMode && imageFileNames.length === 0 && postToEdit?.image && (
+                  <small className="text-secondary mb-2">
+                    Le immagini attuali vengono mantenute se non ne carichi di nuove.
                   </small>
                 )}
               </div>

@@ -38,6 +38,21 @@ export default function DetailsPage() {
     );
   }
 
+  const postImages =
+    locationDetails.post_images && locationDetails.post_images.length > 0
+      ? locationDetails.post_images
+      : [
+          {
+            id: locationDetails.id,
+            created_at: locationDetails.date,
+            post_id: locationDetails.id,
+            image_url: locationDetails.image,
+            position: 0,
+            is_cover: true,
+          },
+        ];
+  const carouselId = `postImagesCarousel-${locationDetails.id}`;
+
   // Funzione per eliminare un post
   const handleDelete = async () => {
     const { error } = await supabase
@@ -91,11 +106,45 @@ export default function DetailsPage() {
 
         <section className="detail-layout">
           <div>
-            <img
-              className="img-detail"
-              src={locationDetails.image}
-              alt={locationDetails.title}
-            />
+            <div id={carouselId} className="carousel slide detail-carousel">
+              <div className="carousel-inner">
+                {postImages.map((image, index) => (
+                  <div
+                    key={image.id}
+                    className={`carousel-item ${index === 0 ? "active" : ""}`}
+                  >
+                    <img
+                      className="img-detail"
+                      src={image.image_url}
+                      alt={`${locationDetails.title} - immagine ${index + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {postImages.length > 1 && (
+                <>
+                  <button
+                    className="carousel-control-prev"
+                    type="button"
+                    data-bs-target={`#${carouselId}`}
+                    data-bs-slide="prev"
+                  >
+                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span className="visually-hidden">Precedente</span>
+                  </button>
+                  <button
+                    className="carousel-control-next"
+                    type="button"
+                    data-bs-target={`#${carouselId}`}
+                    data-bs-slide="next"
+                  >
+                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span className="visually-hidden">Successiva</span>
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           <article className="app-panel">

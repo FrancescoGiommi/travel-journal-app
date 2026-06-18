@@ -38,7 +38,30 @@ function isTravelPost(dati: unknown): dati is TravelPost {
       (typeof obj.expence_euro === "number" || obj.expence_euro === null) &&
       "tags" in obj &&
       Array.isArray(obj.tags) &&
-      obj.tags.every((tag) => typeof tag === "string");
+      obj.tags.every((tag) => typeof tag === "string") &&
+      (!("post_images" in obj) ||
+        obj.post_images === null ||
+        (Array.isArray(obj.post_images) &&
+          obj.post_images.every((image) => {
+            if (!image || typeof image !== "object") return false;
+
+            const postImage = image as { [key: string]: unknown };
+
+            return (
+              "id" in postImage &&
+              typeof postImage.id === "number" &&
+              "created_at" in postImage &&
+              typeof postImage.created_at === "string" &&
+              "post_id" in postImage &&
+              typeof postImage.post_id === "number" &&
+              "image_url" in postImage &&
+              typeof postImage.image_url === "string" &&
+              "position" in postImage &&
+              typeof postImage.position === "number" &&
+              "is_cover" in postImage &&
+              typeof postImage.is_cover === "boolean"
+            );
+          })));
     return isValid;
   }
   return false;

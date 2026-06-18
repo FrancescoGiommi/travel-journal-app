@@ -282,7 +282,13 @@ export default function HomePage() {
             </div>
           </div>
         ) : (
-          currentPosts.map((post) => (
+          currentPosts.map((post) => {
+            const coverImage =
+              post.post_images?.find((image) => image.is_cover)?.image_url ??
+              post.post_images?.[0]?.image_url ??
+              post.image;
+
+            return (
             <div
               key={post.id}
               className="col-12 col-sm-6 col-md-4 col-lg-4 mb-4"
@@ -294,7 +300,7 @@ export default function HomePage() {
                   className="text-decoration-none text-dark"
                 >
                   <PostCard
-                    image={post.image}
+                    image={coverImage}
                     title={post.title}
                     tags={post.tags}
                     renderTags={renderTags}
@@ -306,7 +312,8 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </section>
 

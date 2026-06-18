@@ -11,10 +11,17 @@ export function useTravel() {
     try {
       const { data, error } = await supabase
         .from("japan_travel_posts")
-        .select("*");
+        .select("*, post_images(*)");
       if (error) throw error;
 
-      const validPosts = (data ?? []).filter(isTravelPost);
+      const validPosts = (data ?? [])
+        .filter(isTravelPost)
+        .map((post) => ({
+          ...post,
+          post_images: [...(post.post_images ?? [])].sort(
+            (a, b) => a.position - b.position
+          ),
+        }));
 
       setPosts(validPosts);
       return validPosts;
