@@ -319,49 +319,37 @@ export default function HomePage() {
 
       {/* Paginazione */}
       {totalPages > 1 && (
-        <nav
-          aria-label="Page navigation"
-          className="d-flex justify-content-center"
-        >
-          <ul className="pagination">
-            <li
-              className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-            >
-                <button
-                  className="page-link"
-                  onClick={() => goToPage(currentPage - 1)}
-                >
-                Previous
-              </button>
-            </li>
+        <nav className="app-pagination" aria-label="Paginazione post">
+          <button
+            className="pagination-button pagination-button-wide"
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Precedente
+          </button>
+
+          <div className="pagination-pages">
             {Array.from({ length: totalPages }, (_, i) => (
-              <li
+              <button
                 key={i}
-                className={`page-item ${
-                  currentPage === i + 1 ? "active" : ""
+                className={`pagination-button ${
+                  currentPage === i + 1 ? "is-active" : ""
                 }`}
+                onClick={() => goToPage(i + 1)}
+                aria-current={currentPage === i + 1 ? "page" : undefined}
               >
-                <button
-                  className="page-link"
-                  onClick={() => goToPage(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              </li>
-            ))}
-            <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
-            >
-                <button
-                  className="page-link"
-                  onClick={() => goToPage(currentPage + 1)}
-                >
-                Next
+                {i + 1}
               </button>
-            </li>
-          </ul>
+            ))}
+          </div>
+
+          <button
+            className="pagination-button pagination-button-wide"
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Successiva
+          </button>
         </nav>
       )}
     </main>
