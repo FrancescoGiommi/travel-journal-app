@@ -68,7 +68,10 @@ export default function AddPostPage() {
   const formatFileName = (name: string): string => {
     const ext = name.split(".").pop() ?? "";
     const base = name.slice(0, -(ext.length + 1));
-    const slug = base.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    const slug = base
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
     return `${slug}-${Date.now()}.${ext}`;
   };
 
@@ -130,7 +133,10 @@ export default function AddPostPage() {
           .upload(fileName, file);
 
         if (uploadError) {
-          console.error("Errore nel caricamento dell'immagine:", uploadError.message);
+          console.error(
+            "Errore nel caricamento dell'immagine:",
+            uploadError.message,
+          );
           return;
         }
 
@@ -198,7 +204,10 @@ export default function AddPostPage() {
         .insert(imageRows);
 
       if (imageInsertError) {
-        console.error("Errore nel salvataggio delle immagini:", imageInsertError.message);
+        console.error(
+          "Errore nel salvataggio delle immagini:",
+          imageInsertError.message,
+        );
         return;
       }
     }
@@ -242,297 +251,319 @@ export default function AddPostPage() {
 
   return (
     <main className="app-shell">
-        <section className="app-hero">
+      <section className="app-hero form-hero">
+        <div>
           <button
             className="btn-app-secondary"
             style={{ whiteSpace: "nowrap" }}
             onClick={() => navigate(-1)}
-          >← Indietro</button>
-          <h1 className="app-title">
-            {isEditMode ? "Modifica post" : "Aggiungi post"}
-          </h1>
-        </section>
-        <div className="glass-box">
-          <form onSubmit={handleSave}>
-            <div className="d-flex gap-3">
-              <div className="d-flex flex-column w-100">
-                <span className="text-light mb-1">Inseirisci il titolo</span>
-                {/* Titolo */}
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  id="title"
-                  className={`form-control text-bg-dark mb-3 ${
-                    formSubmitted && !title ? "is-invalid" : ""
-                  }`}
-                  required
-                />
-              </div>
-              <div className="d-flex flex-column w-100">
-                {/* Luogo */}
-                <span className="text-light mb-1">Inserisci il Luogo</span>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  id="location"
-                  className={`form-control text-bg-dark mb-3 ${
-                    formSubmitted && !location ? "is-invalid" : ""
-                  }`}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="d-flex flex-column w-100 mb-3">
-              {/* Descrizione */}
-              <span className="text-light mb-1">Inserisci una descrizione</span>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                id="description"
-                className={`form-control text-bg-dark mb-3 ${
-                  formSubmitted && !description ? "is-invalid" : ""
-                }`}
-                required
-              ></textarea>
-            </div>
-            <div className="d-flex gap-3 mb-3">
-              <div className="d-flex flex-column w-100">
-                {/* Immagine */}
-                <span className="text-light mb-1">Carica una o piu immagini</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  id="image"
-                  className={`form-control text-bg-dark mb-1 ${
-                    formSubmitted && !isEditMode && imageFiles.length === 0 ? "is-invalid" : ""
-                  }`}
-                  required={!isEditMode}
-                />
-                {imageFileNames.length > 0 && (
-                  <small className="text-secondary mb-2">
-                    File selezionati: {imageFileNames.join(", ")}
-                  </small>
-                )}
-                {isEditMode && imageFileNames.length === 0 && postToEdit?.image && (
-                  <small className="text-secondary mb-2">
-                    Le immagini attuali vengono mantenute se non ne carichi di nuove.
-                  </small>
-                )}
-              </div>
-              <div className="d-flex flex-column w-100">
-                {/* Data */}
-                <span className="text-light mb-1">Inserisci la data</span>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  id="date"
-                  className={`form-control text-bg-dark mb-3 ${
-                    formSubmitted && !date ? "is-invalid" : ""
-                  }`}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="d-flex flex-column w-100 mb-3">
-              {/* Spesa in euro */}
-              <span className="text-light mb-1">Inserisci l'importo speso</span>
+          >
+            ← Indietro
+          </button>
+        </div>
+        <h1 className="app-title">
+          {isEditMode ? "Modifica post" : "Aggiungi post"}
+        </h1>
+      </section>
+      <div className="glass-box">
+        <form onSubmit={handleSave}>
+          <div className="d-flex gap-3">
+            <div className="d-flex flex-column w-100">
+              <span className="text-light mb-1">Inseirisci il titolo</span>
+              {/* Titolo */}
               <input
-                type="number"
-                value={expenceEuro}
-                onChange={(e) =>
-                  setExpenseEuro(
-                    e.target.value === "" ? "" : Number(e.target.value)
-                  )
-                }
-                id="expense_euro"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                id="title"
                 className={`form-control text-bg-dark mb-3 ${
-                  formSubmitted && expenceEuro === "" ? "is-invalid" : ""
+                  formSubmitted && !title ? "is-invalid" : ""
                 }`}
                 required
               />
             </div>
-            <div className="d-flex gap-3 mb-3">
-              <div className="d-flex flex-column w-100">
-                {/* Effort economico */}
-                <span className="text-light mb-1">
-                  Seleziona effort economico
-                </span>
-
-                <select
-                  aria-label="Default select example"
-                  value={economicEffort}
-                  onChange={(e) => setEconomicEffort(Number(e.target.value))}
-                  className={`form-control text-bg-dark mb-3 ${
-                    formSubmitted && !economicEffort ? "is-invalid" : ""
-                  }`}
-                  required
-                >
-                  <option value="">Seleziona un opzione</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </div>
-              <div className="d-flex flex-column w-100">
-                {/* Impegno fisico */}
-                <span className="text-light mb-1">
-                  Seleziona impegno fisico
-                </span>
-
-                <select
-                  aria-label="Default select example"
-                  value={physicalCommitment}
-                  onChange={(e) =>
-                    setPhysicalCommitment(Number(e.target.value))
-                  }
-                  className={`form-control text-bg-dark mb-3 ${
-                    formSubmitted && !physicalCommitment ? "is-invalid" : ""
-                  }`}
-                  required
-                >
-                  <option value="">Seleziona un opzione</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </div>
+            <div className="d-flex flex-column w-100">
+              {/* Luogo */}
+              <span className="text-light mb-1">Inserisci il Luogo</span>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                id="location"
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !location ? "is-invalid" : ""
+                }`}
+                required
+              />
             </div>
+          </div>
 
-            <div className="d-flex flex-column w-100 mb-3">
-              {/* Stato d'animo */}
-              <span className="text-light mb-1">Seleziona stato d'animo</span>
+          <div className="d-flex flex-column w-100 mb-3">
+            {/* Descrizione */}
+            <span className="text-light mb-1">Inserisci una descrizione</span>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              id="description"
+              className={`form-control text-bg-dark mb-3 ${
+                formSubmitted && !description ? "is-invalid" : ""
+              }`}
+              required
+            ></textarea>
+          </div>
+          <div className="d-flex gap-3 mb-3">
+            <div className="d-flex flex-column w-100">
+              {/* Immagine */}
+              <span className="text-light mb-1">Carica una o piu immagini</span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                id="image"
+                className={`form-control text-bg-dark mb-1 ${
+                  formSubmitted && !isEditMode && imageFiles.length === 0
+                    ? "is-invalid"
+                    : ""
+                }`}
+                required={!isEditMode}
+              />
+              {imageFileNames.length > 0 && (
+                <small className="text-secondary mb-2">
+                  File selezionati: {imageFileNames.join(", ")}
+                </small>
+              )}
+              {isEditMode &&
+                imageFileNames.length === 0 &&
+                postToEdit?.image && (
+                  <small className="text-secondary mb-2">
+                    Le immagini attuali vengono mantenute se non ne carichi di
+                    nuove.
+                  </small>
+                )}
+            </div>
+            <div className="d-flex flex-column w-100">
+              {/* Data */}
+              <span className="text-light mb-1">Inserisci la data</span>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                id="date"
+                className={`form-control text-bg-dark mb-3 ${
+                  formSubmitted && !date ? "is-invalid" : ""
+                }`}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="d-flex flex-column w-100 mb-3">
+            {/* Spesa in euro */}
+            <span className="text-light mb-1">Inserisci l'importo speso</span>
+            <input
+              type="number"
+              value={expenceEuro}
+              onChange={(e) =>
+                setExpenseEuro(
+                  e.target.value === "" ? "" : Number(e.target.value),
+                )
+              }
+              id="expense_euro"
+              className={`form-control text-bg-dark mb-3 ${
+                formSubmitted && expenceEuro === "" ? "is-invalid" : ""
+              }`}
+              required
+            />
+          </div>
+          <div className="d-flex gap-3 mb-3">
+            <div className="d-flex flex-column w-100">
+              {/* Effort economico */}
+              <span className="text-light mb-1">
+                Seleziona effort economico
+              </span>
+
               <select
                 aria-label="Default select example"
-                value={humor}
-                onChange={(e) => setHumor(e.target.value)}
+                value={economicEffort}
+                onChange={(e) => setEconomicEffort(Number(e.target.value))}
                 className={`form-control text-bg-dark mb-3 ${
-                  formSubmitted && !humor ? "is-invalid" : ""
+                  formSubmitted && !economicEffort ? "is-invalid" : ""
                 }`}
                 required
               >
                 <option value="">Seleziona un opzione</option>
-                {Object.entries(humorIcons).map(([key, icon]) => (
-                  <option key={key} value={key}>
-                    {icon} {key}
-                  </option>
-                ))}
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
               </select>
             </div>
+            <div className="d-flex flex-column w-100">
+              {/* Impegno fisico */}
+              <span className="text-light mb-1">Seleziona impegno fisico</span>
 
-            <div className="d-flex flex-column w-100 mb-3">
-              {/* Riflessione positiva */}
-              <span className="text-light mb-1">
-                Inserisci una riflessione positiva
-              </span>
-              <textarea
-                id="positive_reflection"
-                value={positiveReflection}
-                onChange={(e) => setPositiveReflection(e.target.value)}
+              <select
+                aria-label="Default select example"
+                value={physicalCommitment}
+                onChange={(e) => setPhysicalCommitment(Number(e.target.value))}
                 className={`form-control text-bg-dark mb-3 ${
-                  formSubmitted && !positiveReflection ? "is-invalid" : ""
+                  formSubmitted && !physicalCommitment ? "is-invalid" : ""
                 }`}
                 required
-              ></textarea>
-            </div>
-
-            <div className="d-flex flex-column w-100 mb-3">
-              {/* Riflessione negativa */}
-              <span className="text-light mb-1">
-                Inserisci una riflessione negativa
-              </span>
-              <textarea
-                id="negative_reflection"
-                value={negativeReflection}
-                onChange={(e) => setNegativeReflection(e.target.value)}
-                className={`form-control text-bg-dark mb-3 ${
-                  formSubmitted && !negativeReflection ? "is-invalid" : ""
-                }`}
-                required
-              ></textarea>
-            </div>
-            {/* Tags */}
-            <div className="d-flex flex-column w-100 mb-3">
-              <span className="text-light mb-1">
-                Seleziona fino a 3 tags
-              </span>
-              <Select
-                options={Object.entries(tagStyles)
-                  .filter(([key]) => !tags.includes(key))
-                  .map(([key, { icon }]) => ({ value: key, label: `${icon} ${key}` }))}
-                onChange={(option) => { if (option) handleTagSelect(option.value); }}
-                value={null}
-                isDisabled={tags.length >= 3}
-                placeholder="Cerca un tag..."
-                classNamePrefix="rs"
-                menuPortalTarget={document.body}
-                menuPosition="fixed"
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (base, state) => ({
-                    ...base,
-                    backgroundColor: "#212529",
-                    borderColor: formSubmitted && tags.length === 0 ? "#dc3545" : state.isFocused ? "#86b7fe" : "#495057",
-                    boxShadow: state.isFocused ? "0 0 0 0.25rem rgba(13,110,253,.25)" : "none",
-                    color: "#fff",
-                  }),
-                  menu: (base) => ({ ...base, backgroundColor: "#212529", zIndex: 9999 }),
-                  option: (base, state) => ({
-                    ...base,
-                    backgroundColor: state.isFocused ? "#2c3034" : "#212529",
-                    color: "#fff",
-                    cursor: "pointer",
-                  }),
-                  singleValue: (base) => ({ ...base, color: "#fff" }),
-                  input: (base) => ({ ...base, color: "#fff" }),
-                  placeholder: (base) => ({ ...base, color: "#adb5bd" }),
-                  indicatorSeparator: (base) => ({ ...base, backgroundColor: "#495057" }),
-                  dropdownIndicator: (base) => ({ ...base, color: "#adb5bd" }),
-                }}
-              />
-              <div className="d-flex flex-wrap gap-2 mt-2">
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className={`badge bg-${tagStyles[tag]?.color ?? "secondary"} d-flex align-items-center gap-1`}
-                    style={{ fontSize: "0.85rem" }}
-                  >
-                    {tagStyles[tag]?.icon} {tag}
-                    <button
-                      type="button"
-                      className="btn-close btn-close-white ms-1"
-                      style={{ fontSize: "0.6rem" }}
-                      onClick={() => handleTagRemove(tag)}
-                    />
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="form-actions">
-              <button type="submit" className="btn-app-primary">
-                {isEditMode ? "Aggiorna post" : "Salva post"}
-              </button>
-              <Link
-                to={isEditMode && numericId ? `/details/${numericId}` : "/"}
-                state={isEditMode ? { from: backPath } : undefined}
               >
-                <button type="button" className="btn-app-secondary">
-                  Annulla
-                </button>
-              </Link>
+                <option value="">Seleziona un opzione</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
             </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="d-flex flex-column w-100 mb-3">
+            {/* Stato d'animo */}
+            <span className="text-light mb-1">Seleziona stato d'animo</span>
+            <select
+              aria-label="Default select example"
+              value={humor}
+              onChange={(e) => setHumor(e.target.value)}
+              className={`form-control text-bg-dark mb-3 ${
+                formSubmitted && !humor ? "is-invalid" : ""
+              }`}
+              required
+            >
+              <option value="">Seleziona un opzione</option>
+              {Object.entries(humorIcons).map(([key, icon]) => (
+                <option key={key} value={key}>
+                  {icon} {key}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="d-flex flex-column w-100 mb-3">
+            {/* Riflessione positiva */}
+            <span className="text-light mb-1">
+              Inserisci una riflessione positiva
+            </span>
+            <textarea
+              id="positive_reflection"
+              value={positiveReflection}
+              onChange={(e) => setPositiveReflection(e.target.value)}
+              className={`form-control text-bg-dark mb-3 ${
+                formSubmitted && !positiveReflection ? "is-invalid" : ""
+              }`}
+              required
+            ></textarea>
+          </div>
+
+          <div className="d-flex flex-column w-100 mb-3">
+            {/* Riflessione negativa */}
+            <span className="text-light mb-1">
+              Inserisci una riflessione negativa
+            </span>
+            <textarea
+              id="negative_reflection"
+              value={negativeReflection}
+              onChange={(e) => setNegativeReflection(e.target.value)}
+              className={`form-control text-bg-dark mb-3 ${
+                formSubmitted && !negativeReflection ? "is-invalid" : ""
+              }`}
+              required
+            ></textarea>
+          </div>
+          {/* Tags */}
+          <div className="d-flex flex-column w-100 mb-3">
+            <span className="text-light mb-1">Seleziona fino a 3 tags</span>
+            <Select
+              options={Object.entries(tagStyles)
+                .filter(([key]) => !tags.includes(key))
+                .map(([key, { icon }]) => ({
+                  value: key,
+                  label: `${icon} ${key}`,
+                }))}
+              onChange={(option) => {
+                if (option) handleTagSelect(option.value);
+              }}
+              value={null}
+              isDisabled={tags.length >= 3}
+              placeholder="Cerca un tag..."
+              classNamePrefix="rs"
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                control: (base, state) => ({
+                  ...base,
+                  backgroundColor: "#212529",
+                  borderColor:
+                    formSubmitted && tags.length === 0
+                      ? "#dc3545"
+                      : state.isFocused
+                        ? "#86b7fe"
+                        : "#495057",
+                  boxShadow: state.isFocused
+                    ? "0 0 0 0.25rem rgba(13,110,253,.25)"
+                    : "none",
+                  color: "#fff",
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "#212529",
+                  zIndex: 9999,
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused ? "#2c3034" : "#212529",
+                  color: "#fff",
+                  cursor: "pointer",
+                }),
+                singleValue: (base) => ({ ...base, color: "#fff" }),
+                input: (base) => ({ ...base, color: "#fff" }),
+                placeholder: (base) => ({ ...base, color: "#adb5bd" }),
+                indicatorSeparator: (base) => ({
+                  ...base,
+                  backgroundColor: "#495057",
+                }),
+                dropdownIndicator: (base) => ({ ...base, color: "#adb5bd" }),
+              }}
+            />
+            <div className="d-flex flex-wrap gap-2 mt-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className={`badge bg-${tagStyles[tag]?.color ?? "secondary"} d-flex align-items-center gap-1`}
+                  style={{ fontSize: "0.85rem" }}
+                >
+                  {tagStyles[tag]?.icon} {tag}
+                  <button
+                    type="button"
+                    className="btn-close btn-close-white ms-1"
+                    style={{ fontSize: "0.6rem" }}
+                    onClick={() => handleTagRemove(tag)}
+                  />
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn-app-primary">
+              {isEditMode ? "Aggiorna post" : "Salva post"}
+            </button>
+            <Link
+              to={isEditMode && numericId ? `/details/${numericId}` : "/"}
+              state={isEditMode ? { from: backPath } : undefined}
+            >
+              <button type="button" className="btn-app-secondary">
+                Annulla
+              </button>
+            </Link>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }

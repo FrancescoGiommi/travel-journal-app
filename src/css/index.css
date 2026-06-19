@@ -47,6 +47,19 @@ select {
   border-bottom: 1px solid rgba(226, 232, 240, 0.18);
 }
 
+.form-hero {
+  grid-template-columns: 1fr auto 1fr;
+}
+
+.form-hero > div {
+  justify-self: start;
+}
+
+.form-hero .app-title {
+  grid-column: 2;
+  text-align: center;
+}
+
 .app-kicker {
   margin-bottom: 8px;
   color: #bfdbfe;
@@ -344,6 +357,11 @@ select {
 
   .app-hero {
     align-items: flex-start;
+  }
+
+  .form-hero .app-title {
+    grid-column: 1;
+    text-align: left;
   }
 
   .app-actions {
