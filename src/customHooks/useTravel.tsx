@@ -12,7 +12,27 @@ export function useTravel() {
       const { data, error } = await supabase
         .from("japan_travel_posts")
         .select("*, post_images(*)");
-      if (error) throw error;
+
+      if (error) {
+        if (error.code === "42501") {
+          console.warn(
+            "Permessi mancanti su post_images, uso il fallback su japan_travel_posts.image"
+          );
+
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from("japan_travel_posts")
+            .select("*");
+
+          if (fallbackError) throw fallbackError;
+
+          const fallbackPosts = (fallbackData ?? []).filter(isTravelPost);
+
+          setPosts(fallbackPosts);
+          return fallbackPosts;
+        }
+
+        throw error;
+      }
 
       const validPosts = (data ?? [])
         .filter(isTravelPost)
