@@ -1,15 +1,16 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 import { supabase } from "../../supabase/supabaseClient";
 import DeletePostModal from "../components/DeletePostModal";
+import type { PostImage } from "../../types";
 
 export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
   const location = useLocation();
-  const backPath =
-    (location.state as { from?: string } | null)?.from ?? "/";
+  const backPath = (location.state as { from?: string } | null)?.from ?? "/";
 
   const {
     fetchPosts,
@@ -20,12 +21,46 @@ export default function DetailsPage() {
     formatDate,
   } = useGlobalContext();
 
-  if (!id) {
-    return <p>Post non trovato</p>;
-  }
-
-  const numericId = parseInt(id, 10);
+  const numericId = id ? parseInt(id, 10) : NaN;
   const locationDetails = posts.find((post) => post.id === numericId);
+
+  // Gli hook devono essere chiamati incondizionatamente per preservare l'ordine tra i rendering
+  const [localImages, setLocalImages] = useState<PostImage[] | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchPostImages = async () => {
+      try {
+        if (!locationDetails) return;
+        // Se abbiamo già immagini nella relazione non servono fetch aggiuntive
+        if (
+          locationDetails.post_images &&
+          locationDetails.post_images.length > 0
+        )
+          return;
+
+        const { data, error } = await supabase
+          .from("post_images")
+          .select("*")
+          .eq("post_id", numericId)
+          .order("position", { ascending: true });
+
+        if (error) {
+          console.error(
+            "Errore nel recupero delle immagini del post:",
+            error.message,
+          );
+          return;
+        }
+
+        setLocalImages(data ?? []);
+      } catch (err) {
+        console.error("Errore nel fetch delle immagini:", err);
+      }
+    };
+
+    fetchPostImages();
+  }, [numericId, locationDetails]);
 
   if (!locationDetails) {
     return (
@@ -51,7 +86,33 @@ export default function DetailsPage() {
             is_cover: true,
           },
         ];
-  const carouselId = `postImagesCarousel-${locationDetails.id}`;
+  // Local fallback: se la relazione `post_images` non è presente nella fetch globale,
+  // proviamo a recuperare le immagini direttamente dalla tabella `post_images`.
+
+  const displayedImages = localImages ?? postImages;
+  const carouselId = `postImagesCarousel-${locationDetails?.id ?? numericId}`;
+
+  useEffect(() => {
+    // Debug: log immagini e stato per capire cosa viene renderizzato
+    console.debug("DetailsPage images", {
+      postImagesLength: postImages.length,
+      localImagesLength: localImages ? localImages.length : null,
+      displayedImagesLength: displayedImages.length,
+      displayedImages,
+    });
+
+    // Reset index quando cambiano le immagini
+    setActiveIndex(0);
+
+    // Autoplay gestito in React (fallback se non vogliamo dipendere da Bootstrap)
+    if (displayedImages.length > 1) {
+      const id = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % displayedImages.length);
+      }, 5000);
+      return () => clearInterval(id);
+    }
+    return;
+  }, [localImages, postImages, displayedImages.length, carouselId]);
 
   // Funzione per eliminare un post
   const handleDelete = async () => {
@@ -81,14 +142,19 @@ export default function DetailsPage() {
           </div>
 
           <div className="app-actions">
-            <button className="btn-app-secondary" onClick={() => navigate(backPath)}>
+            <button
+              className="btn-app-secondary"
+              onClick={() => navigate(backPath)}
+            >
               Indietro
             </button>
             <button
               type="button"
               className="btn-app-warning"
               onClick={() =>
-                navigate(`/editPost/${numericId}`, { state: { from: backPath } })
+                navigate(`/editPost/${numericId}`, {
+                  state: { from: backPath },
+                })
               }
             >
               Modifica
@@ -106,43 +172,44 @@ export default function DetailsPage() {
 
         <section className="detail-layout">
           <div>
-            <div id={carouselId} className="carousel slide detail-carousel">
+            <div
+              id={carouselId}
+              className="carousel slide detail-carousel"
+              data-bs-ride={displayedImages.length > 1 ? "carousel" : undefined}
+              data-bs-interval={displayedImages.length > 1 ? 5000 : undefined}
+            >
               <div className="carousel-inner">
-                {postImages.map((image, index) => (
+                {displayedImages.length > 0 && (
                   <div
-                    key={image.id}
-                    className={`carousel-item ${index === 0 ? "active" : ""}`}
+                    key={displayedImages[activeIndex].id}
+                    className={`carousel-item active`}
                   >
                     <img
                       className="img-detail"
-                      src={image.image_url}
-                      alt={`${locationDetails.title} - immagine ${index + 1}`}
+                      src={displayedImages[activeIndex].image_url}
+                      alt={`${locationDetails.title} - immagine ${activeIndex + 1}`}
                     />
                   </div>
-                ))}
+                )}
               </div>
 
-              {postImages.length > 1 && (
-                <>
-                  <button
-                    className="carousel-control-prev"
-                    type="button"
-                    data-bs-target={`#${carouselId}`}
-                    data-bs-slide="prev"
-                  >
-                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Precedente</span>
-                  </button>
-                  <button
-                    className="carousel-control-next"
-                    type="button"
-                    data-bs-target={`#${carouselId}`}
-                    data-bs-slide="next"
-                  >
-                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Successiva</span>
-                  </button>
-                </>
+              {displayedImages.length > 1 && (
+                <div className="thumbnails d-flex align-items-center">
+                  {displayedImages.map((img, i) => (
+                    <button
+                      key={`thumb-${img.id}`}
+                      type="button"
+                      className={`thumb-btn ${i === activeIndex ? "active" : ""}`}
+                      onClick={() => setActiveIndex(i)}
+                    >
+                      <img
+                        src={img.image_url}
+                        alt={`thumb-${i}`}
+                        className={`thumb-img ${i === activeIndex ? "active" : ""}`}
+                      />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
           </div>
