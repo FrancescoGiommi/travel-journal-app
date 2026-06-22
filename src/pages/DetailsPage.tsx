@@ -104,14 +104,7 @@ export default function DetailsPage() {
     // Reset index quando cambiano le immagini
     setActiveIndex(0);
 
-    // Autoplay gestito in React (fallback se non vogliamo dipendere da Bootstrap)
-    if (displayedImages.length > 1) {
-      const id = setInterval(() => {
-        setActiveIndex((prev) => (prev + 1) % displayedImages.length);
-      }, 5000);
-      return () => clearInterval(id);
-    }
-    return;
+    return; // Removed autoplay logic
   }, [localImages, postImages, displayedImages.length, carouselId]);
 
   // Funzione per eliminare un post
@@ -172,12 +165,7 @@ export default function DetailsPage() {
 
         <section className="detail-layout">
           <div>
-            <div
-              id={carouselId}
-              className="carousel slide detail-carousel"
-              data-bs-ride={displayedImages.length > 1 ? "carousel" : undefined}
-              data-bs-interval={displayedImages.length > 1 ? 5000 : undefined}
-            >
+            <div id={carouselId} className="carousel slide detail-carousel">
               <div className="carousel-inner">
                 {displayedImages.length > 0 && (
                   <div
