@@ -1,9 +1,9 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 import { supabase } from "../../supabase/supabaseClient";
 import DeletePostModal from "../components/DeletePostModal";
-import type { PostImage } from "../../types";
+import type { PostImage, TravelPost } from "../../types";
 
 export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,92 +22,122 @@ export default function DetailsPage() {
   } = useGlobalContext();
 
   const numericId = id ? parseInt(id, 10) : NaN;
-  const locationDetails = posts.find((post) => post.id === numericId);
 
-  // Gli hook devono essere chiamati incondizionatamente per preservare l'ordine tra i rendering
+  const [singlePost, setSinglePost] = useState<TravelPost | null>(null);
   const [localImages, setLocalImages] = useState<PostImage[] | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [loadingSinglePost, setLoadingSinglePost] = useState(false);
+
+  const locationDetails = useMemo(
+    () => posts.find((post) => post.id === numericId) ?? null,
+    [posts, numericId],
+  );
+
+  const effectiveDetails = locationDetails ?? singlePost ?? null;
+
+  useEffect(() => {
+    const fetchSinglePost = async () => {
+      if (!Number.isFinite(numericId)) return;
+      if (locationDetails) return;
+
+      setLoadingSinglePost(true);
+
+      const { data, error } = await supabase
+        .from("japan_travel_posts")
+        .select(
+          `
+          *,
+          post_images (
+            id,
+            image_url,
+            position,
+            is_cover
+          )
+        `,
+        )
+        .eq("id", numericId)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Errore recupero singolo post:", error.message);
+        setLoadingSinglePost(false);
+        return;
+      }
+
+      if (data) {
+        setSinglePost({
+          ...data,
+          post_images: [...(data.post_images ?? [])].sort(
+            (a, b) => a.position - b.position,
+          ),
+        } as TravelPost);
+      }
+
+      setLoadingSinglePost(false);
+    };
+
+    fetchSinglePost();
+  }, [numericId, locationDetails]);
 
   useEffect(() => {
     const fetchPostImages = async () => {
-      try {
-        if (!locationDetails) return;
-        // Se abbiamo già immagini nella relazione non servono fetch aggiuntive
-        if (
-          locationDetails.post_images &&
-          locationDetails.post_images.length > 0
-        )
-          return;
+      if (!Number.isFinite(numericId)) return;
+      if (!effectiveDetails) return;
 
-        const { data, error } = await supabase
-          .from("post_images")
-          .select("*")
-          .eq("post_id", numericId)
-          .order("position", { ascending: true });
-
-        if (error) {
-          console.error(
-            "Errore nel recupero delle immagini del post:",
-            error.message,
-          );
-          return;
-        }
-
-        setLocalImages(data ?? []);
-      } catch (err) {
-        console.error("Errore nel fetch delle immagini:", err);
+      if (
+        effectiveDetails.post_images &&
+        effectiveDetails.post_images.length > 0
+      ) {
+        setLocalImages(null);
+        return;
       }
+
+      const { data, error } = await supabase
+        .from("post_images")
+        .select("*")
+        .eq("post_id", numericId)
+        .order("position", { ascending: true });
+
+      if (error) {
+        console.error(
+          "Errore nel recupero delle immagini del post:",
+          error.message,
+        );
+        return;
+      }
+
+      setLocalImages((data ?? []) as PostImage[]);
     };
 
     fetchPostImages();
-  }, [numericId, locationDetails]);
+  }, [numericId, effectiveDetails]);
 
-  if (!locationDetails) {
-    return (
-      <main className="app-shell">
-        <div className="app-panel empty-state">
-          <h2>Post non trovato</h2>
-          <p>I dati potrebbero essere ancora in caricamento.</p>
-        </div>
-      </main>
-    );
-  }
-
-  const postImages =
-    locationDetails.post_images && locationDetails.post_images.length > 0
-      ? locationDetails.post_images
-      : [
-          {
-            id: locationDetails.id,
-            created_at: locationDetails.date,
-            post_id: locationDetails.id,
-            image_url: locationDetails.image,
-            position: 0,
-            is_cover: true,
-          },
-        ];
-  // Local fallback: se la relazione `post_images` non è presente nella fetch globale,
-  // proviamo a recuperare le immagini direttamente dalla tabella `post_images`.
+  const postImages: PostImage[] = effectiveDetails
+    ? effectiveDetails.post_images && effectiveDetails.post_images.length > 0
+      ? [...effectiveDetails.post_images].sort(
+          (a, b) => a.position - b.position,
+        )
+      : effectiveDetails.image
+        ? [
+            {
+              id: effectiveDetails.id,
+              created_at: effectiveDetails.date,
+              post_id: effectiveDetails.id,
+              image_url: effectiveDetails.image,
+              position: 0,
+              is_cover: true,
+            },
+          ]
+        : []
+    : [];
 
   const displayedImages = localImages ?? postImages;
-  const carouselId = `postImagesCarousel-${locationDetails?.id ?? numericId}`;
+  const carouselId = `postImagesCarousel-${effectiveDetails?.id ?? numericId}`;
 
   useEffect(() => {
-    // Debug: log immagini e stato per capire cosa viene renderizzato
-    console.debug("DetailsPage images", {
-      postImagesLength: postImages.length,
-      localImagesLength: localImages ? localImages.length : null,
-      displayedImagesLength: displayedImages.length,
-      displayedImages,
-    });
-
-    // Reset index quando cambiano le immagini
     setActiveIndex(0);
+  }, [carouselId, displayedImages.length]);
 
-    return; // Removed autoplay logic
-  }, [localImages, postImages, displayedImages.length, carouselId]);
-
-  // Funzione per eliminare un post
   const handleDelete = async () => {
     const { error } = await supabase
       .from("japan_travel_posts")
@@ -119,11 +149,33 @@ export default function DetailsPage() {
       return;
     }
 
-    // rifaccio la query per ottenere la lista aggiornata
     await fetchPosts();
-
     navigate("/");
   };
+
+  if (loadingSinglePost && !effectiveDetails) {
+    return (
+      <main className="app-shell">
+        <div className="app-panel empty-state">
+          <h2>Caricamento post...</h2>
+          <p>I dati sono in fase di caricamento, attendere prego.</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!effectiveDetails) {
+    return (
+      <main className="app-shell">
+        <div className="app-panel empty-state">
+          <h2>Post non trovato</h2>
+          <p>I dati potrebbero essere ancora in caricamento.</p>
+        </div>
+      </main>
+    );
+  }
+
+  const postSource = effectiveDetails;
 
   return (
     <>
@@ -131,7 +183,7 @@ export default function DetailsPage() {
         <section className="app-hero">
           <div>
             <p className="app-kicker">Dettaglio viaggio</p>
-            <h1 className="app-title">{locationDetails.title}</h1>
+            <h1 className="app-title">{postSource.title}</h1>
           </div>
 
           <div className="app-actions">
@@ -169,13 +221,13 @@ export default function DetailsPage() {
               <div className="carousel-inner">
                 {displayedImages.length > 0 && (
                   <div
+                    className="carousel-item active"
                     key={displayedImages[activeIndex].id}
-                    className={`carousel-item active`}
                   >
                     <img
                       className="img-detail"
                       src={displayedImages[activeIndex].image_url}
-                      alt={`${locationDetails.title} - immagine ${activeIndex + 1}`}
+                      alt={`${postSource.title} - immagine ${activeIndex + 1}`}
                     />
                   </div>
                 )}
@@ -206,31 +258,30 @@ export default function DetailsPage() {
             <div className="detail-section mt-0 pt-0 border-0">
               <h3>Luogo & Data</h3>
               <p>
-                {locationDetails.location} - {formatDate(locationDetails.date)}
+                {postSource.location} - {formatDate(postSource.date)}
               </p>
             </div>
 
             <div className="detail-section">
               <h3>Descrizione</h3>
-              <p>{locationDetails.description}</p>
+              <p>{postSource.description}</p>
             </div>
 
             <div className="detail-section">
               <h3>Riflessioni</h3>
               <p>
                 <strong>Momento positivo:</strong>{" "}
-                {locationDetails.positive_reflection}
+                {postSource.positive_reflection}
               </p>
               <p>
-                <strong>Da ricordare:</strong>{" "}
-                {locationDetails.negative_reflection}
+                <strong>Da ricordare:</strong> {postSource.negative_reflection}
               </p>
             </div>
 
             <div className="detail-section">
               <h3>Umore</h3>
               <p>
-                {humorIcons[locationDetails.humor]} {locationDetails.humor}
+                {humorIcons[postSource.humor]} {postSource.humor}
               </p>
             </div>
 
@@ -238,31 +289,30 @@ export default function DetailsPage() {
               <h3>Impegno e costo</h3>
               <div className="d-flex flex-wrap align-items-center gap-3">
                 <span className="meta-pill">
-                  Effort economico: {locationDetails.economic_effort}/5
+                  Effort economico: {postSource.economic_effort}/5
                 </span>
                 <span className="meta-pill">
-                  Impegno fisico: {locationDetails.physical_commitment}/5
+                  Impegno fisico: {postSource.physical_commitment}/5
                 </span>
                 <span className="meta-pill price-meta-pill">
                   Costo:
-                  {expenceTagsColor(locationDetails.expence_euro ?? 0)}
+                  {expenceTagsColor(postSource.expence_euro ?? 0)}
                 </span>
               </div>
             </div>
 
             <div className="detail-section">
               <h3>Tag</h3>
-              <div>{renderTags(locationDetails.tags)}</div>
+              <div>{renderTags(postSource.tags)}</div>
             </div>
           </article>
         </section>
       </main>
 
-      {/* Modale di conferma eliminazione */}
       <DeletePostModal
         postId={numericId}
         onConfirm={handleDelete}
-        title={locationDetails.title}
+        title={postSource.title}
       />
     </>
   );
