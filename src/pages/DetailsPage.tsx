@@ -274,7 +274,8 @@ export default function DetailsPage() {
                 {postSource.positive_reflection}
               </p>
               <p>
-                <strong>Da ricordare:</strong> {postSource.negative_reflection}
+                <strong>Momento negativo:</strong>{" "}
+                {postSource.negative_reflection}
               </p>
             </div>
 
