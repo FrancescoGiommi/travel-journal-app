@@ -11,18 +11,29 @@ export default function DeletePostModal({
 }: DeletePostModalProps) {
   return (
     <div
-      className="modal fade"
+      className="modal fade delete-modal"
       id="deletePostModal"
       tabIndex={-1}
       aria-labelledby="deletePostModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="deletePostModalLabel">
-              Conferma eliminazione
-            </h5>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content delete-modal-content">
+          <div className="modal-header delete-modal-header">
+            <div className="delete-modal-icon" aria-hidden="true">
+              ⚠
+            </div>
+            <div>
+              <h5
+                className="modal-title delete-modal-title"
+                id="deletePostModalLabel"
+              >
+                Conferma eliminazione
+              </h5>
+              <p className="delete-modal-subtitle">
+                Questa azione non può essere annullata.
+              </p>
+            </div>
             <button
               type="button"
               className="btn-close"
@@ -30,21 +41,23 @@ export default function DeletePostModal({
               aria-label="Close"
             ></button>
           </div>
-          <div className="modal-body">
-            Sei sicuro di voler eliminare il post <strong>{title}</strong>?
-            L'azione è irreversibile.
+          <div className="modal-body delete-modal-body">
+            <p>
+              Sei sicuro di voler eliminare il post <strong>{title}</strong>?
+            </p>
+            <p className="delete-modal-warning">L'azione è irreversibile.</p>
           </div>
-          <div className="modal-footer">
+          <div className="modal-footer delete-modal-footer">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-app-secondary"
               data-bs-dismiss="modal"
             >
               Annulla
             </button>
             <button
               type="button"
-              className="btn btn-danger"
+              className="btn btn-app-danger"
               onClick={() => onConfirm(postId)}
               data-bs-dismiss="modal"
             >

@@ -445,6 +445,79 @@ select {
   padding: 24px;
 }
 
+.delete-modal .modal-content {
+  border: 1px solid rgba(248, 113, 113, 0.24);
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 24px 70px rgba(2, 6, 23, 0.44);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #f8fafc;
+}
+
+.delete-modal-header {
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.14);
+}
+
+.delete-modal-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: rgba(248, 113, 113, 0.16);
+  color: #fecaca;
+  font-size: 1.3rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.delete-modal-title {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.16rem;
+  font-weight: 800;
+}
+
+.delete-modal-subtitle {
+  margin: 4px 0 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.delete-modal-body {
+  padding-top: 12px;
+  color: #e2e8f0;
+}
+
+.delete-modal-body p {
+  margin: 0 0 8px;
+  line-height: 1.7;
+  color: #e2e8f0;
+}
+
+.delete-modal-body strong {
+  color: #ffffff;
+}
+
+.delete-modal-warning {
+  color: #fecaca;
+  font-weight: 700;
+}
+
+.delete-modal-footer {
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 0;
+}
+
+.delete-modal .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
 .is-invalid {
   border: 2px solid red;
 }
