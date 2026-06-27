@@ -35,6 +35,7 @@ export default function AddPostPage() {
   const [negativeReflection, setNegativeReflection] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const hasReachedTagLimit = tags.length >= 3;
 
   useEffect(() => {
     if (!isEditMode || !postToEdit) return;
@@ -480,7 +481,7 @@ export default function AddPostPage() {
             <span className="text-light mb-1">Seleziona fino a 3 tags</span>
             <Select
               options={Object.entries(tagStyles)
-                .filter(([key]) => !tags.includes(key))
+                .filter(([key]) => !hasReachedTagLimit && !tags.includes(key))
                 .map(([key, { icon }]) => ({
                   value: key,
                   label: `${icon} ${key}`,
@@ -489,8 +490,15 @@ export default function AddPostPage() {
                 if (option) handleTagSelect(option.value);
               }}
               value={null}
-              isDisabled={tags.length >= 3}
               placeholder="Cerca un tag..."
+              noOptionsMessage={() =>
+                hasReachedTagLimit
+                  ? "Hai raggiunto il limite massimo di 3 tag"
+                  : "Nessun tag disponibile"
+              }
+              menuPlacement="top"
+              maxMenuHeight={420}
+              menuShouldScrollIntoView
               classNamePrefix="rs"
               menuPortalTarget={document.body}
               menuPosition="fixed"
@@ -515,6 +523,15 @@ export default function AddPostPage() {
                   backgroundColor: "#212529",
                   zIndex: 9999,
                 }),
+                menuList: (base) => ({
+                  ...base,
+                  maxHeight: 420,
+                }),
+                noOptionsMessage: (base) => ({
+                  ...base,
+                  color: "#cbd5e1",
+                  fontWeight: 700,
+                }),
                 option: (base, state) => ({
                   ...base,
                   backgroundColor: state.isFocused ? "#2c3034" : "#212529",
@@ -531,6 +548,11 @@ export default function AddPostPage() {
                 dropdownIndicator: (base) => ({ ...base, color: "#adb5bd" }),
               }}
             />
+            {hasReachedTagLimit && (
+              <small className="tag-limit-message mt-2">
+                Hai raggiunto il limite massimo di 3 tag.
+              </small>
+            )}
             <div className="d-flex flex-wrap gap-2 mt-2">
               {tags.map((tag) => (
                 <span

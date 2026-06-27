@@ -378,6 +378,17 @@ select {
   border-radius: 14px;
 }
 
+.tag-limit-message,
+.tag-limit-inline {
+  color: #bfdbfe;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.tag-limit-inline {
+  margin-left: 8px;
+}
+
 .card {
   overflow: hidden;
   border: 0;
@@ -601,3 +612,4 @@ select {
     --posts-per-page-rows: 9;
   }
 }
+
