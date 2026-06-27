@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import type { NewTravelPost } from "../../types";
 import { supabase } from "../../supabase/supabaseClient";
 import { useGlobalContext } from "../context/GlobalContext";
+
+type TagOption = {
+  value: string;
+  label: string;
+};
+
+const DEFAULT_TAG_ICON = "\u{1F3F7}\uFE0F";
 
 export default function AddPostPage() {
   const navigate = useNavigate();
@@ -36,6 +43,16 @@ export default function AddPostPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const hasReachedTagLimit = tags.length >= 3;
+  const tagOptions: TagOption[] = Object.entries(tagStyles)
+    .filter(
+      ([key]) =>
+        !hasReachedTagLimit &&
+        !tags.some((tag) => tag.toLowerCase() === key.toLowerCase()),
+    )
+    .map(([key, { icon }]) => ({
+      value: key,
+      label: `${icon} ${key}`,
+    }));
 
   useEffect(() => {
     if (!isEditMode || !postToEdit) return;
@@ -53,10 +70,16 @@ export default function AddPostPage() {
     setTags(postToEdit.tags);
   }, [isEditMode, postToEdit]);
 
-  // Aggiunge un tag se non già presente e se sotto il limite di 3
+  // Aggiunge un tag se non gia presente e se sotto il limite di 3
   const handleTagSelect = (tag: string) => {
-    if (tag && !tags.includes(tag) && tags.length < 3) {
-      setTags((prev) => [...prev, tag]);
+    const normalizedTag = tag.trim();
+    const isAlreadySelected = tags.some(
+      (selectedTag) =>
+        selectedTag.toLowerCase() === normalizedTag.toLowerCase(),
+    );
+
+    if (normalizedTag && !isAlreadySelected && tags.length < 3) {
+      setTags((prev) => [...prev, normalizedTag]);
     }
   };
 
@@ -479,18 +502,31 @@ export default function AddPostPage() {
           {/* Tags */}
           <div className="d-flex flex-column w-100 mb-3">
             <span className="text-light mb-1">Seleziona fino a 3 tags</span>
-            <Select
-              options={Object.entries(tagStyles)
-                .filter(([key]) => !hasReachedTagLimit && !tags.includes(key))
-                .map(([key, { icon }]) => ({
-                  value: key,
-                  label: `${icon} ${key}`,
-                }))}
+            <CreatableSelect<TagOption, false>
+              options={tagOptions}
               onChange={(option) => {
                 if (option) handleTagSelect(option.value);
               }}
+              onCreateOption={handleTagSelect}
+              formatCreateLabel={(inputValue) =>
+                hasReachedTagLimit
+                  ? "Limite di 3 tag raggiunto"
+                  : `${DEFAULT_TAG_ICON} Aggiungi "${inputValue.trim()}"`
+              }
+              isValidNewOption={(inputValue) => {
+                const normalizedInput = inputValue.trim().toLowerCase();
+                return (
+                  !hasReachedTagLimit &&
+                  Boolean(normalizedInput) &&
+                  !tags.some((tag) => tag.toLowerCase() === normalizedInput)
+                );
+              }}
               value={null}
-              placeholder="Cerca un tag..."
+              placeholder={
+                hasReachedTagLimit
+                  ? "Limite di 3 tag raggiunto"
+                  : "Cerca un tag..."
+              }
               noOptionsMessage={() =>
                 hasReachedTagLimit
                   ? "Hai raggiunto il limite massimo di 3 tag"
@@ -560,7 +596,7 @@ export default function AddPostPage() {
                   className={`badge bg-${tagStyles[tag]?.color ?? "secondary"} d-flex align-items-center gap-1`}
                   style={{ fontSize: "0.85rem" }}
                 >
-                  {tagStyles[tag]?.icon} {tag}
+                  {tagStyles[tag]?.icon ?? DEFAULT_TAG_ICON} {tag}
                   <button
                     type="button"
                     className="btn-close btn-close-white ms-1"
@@ -589,3 +625,5 @@ export default function AddPostPage() {
     </main>
   );
 }
+
+
