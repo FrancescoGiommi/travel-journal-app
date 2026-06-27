@@ -270,7 +270,7 @@ export default function HomePage() {
         </div>
       )}
 
-      <section className="row justify-content-center">
+      <section className="row justify-content-center posts-grid">
         {currentPosts.length === 0 ? (
           <div className="col-12">
             <div className="app-panel empty-state">

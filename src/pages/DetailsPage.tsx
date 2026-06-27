@@ -5,6 +5,42 @@ import { supabase } from "../../supabase/supabaseClient";
 import DeletePostModal from "../components/DeletePostModal";
 import type { PostImage, TravelPost } from "../../types";
 
+const STORAGE_BUCKET = "travel_images";
+
+function getStoragePathFromPublicUrl(imageUrl: string) {
+  try {
+    const url = new URL(imageUrl);
+    const storagePathMatch = url.pathname.match(
+      new RegExp(
+        `/storage/v1/(?:object/(?:public|sign)|render/image/public)/${STORAGE_BUCKET}/(.+)$`,
+      ),
+    );
+
+    if (!storagePathMatch?.[1]) return null;
+
+    return decodeURIComponent(storagePathMatch[1]);
+  } catch {
+    return null;
+  }
+}
+
+function closeBootstrapModal(modalId: string) {
+  const modalElement = document.getElementById(modalId);
+
+  modalElement?.classList.remove("show");
+  modalElement?.setAttribute("aria-hidden", "true");
+  modalElement?.removeAttribute("aria-modal");
+  modalElement?.removeAttribute("role");
+
+  document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+    backdrop.remove();
+  });
+
+  document.body.classList.remove("modal-open");
+  document.body.style.removeProperty("overflow");
+  document.body.style.removeProperty("padding-right");
+}
+
 export default function DetailsPage() {
   const { id } = useParams<{ id: string }>();
 
@@ -27,6 +63,8 @@ export default function DetailsPage() {
   const [localImages, setLocalImages] = useState<PostImage[] | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loadingSinglePost, setLoadingSinglePost] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const locationDetails = useMemo(
     () => posts.find((post) => post.id === numericId) ?? null,
@@ -139,18 +177,107 @@ export default function DetailsPage() {
   }, [carouselId, displayedImages.length]);
 
   const handleDelete = async () => {
-    const { error } = await supabase
-      .from("japan_travel_posts")
-      .delete()
-      .eq("id", numericId);
+    if (!Number.isFinite(numericId) || !effectiveDetails || isDeleting) return;
 
-    if (error) {
-      console.error("Errore durante l'eliminazione:", error.message);
-      return;
+    setDeleteError("");
+    setIsDeleting(true);
+
+    try {
+      const { data: storedImages, error: storedImagesError } = await supabase
+        .from("post_images")
+        .select("image_url")
+        .eq("post_id", numericId);
+
+      if (storedImagesError) {
+        throw new Error(
+          `Impossibile leggere le immagini collegate al post: ${storedImagesError.message}`,
+        );
+      }
+
+      const imageUrls = [
+        effectiveDetails.image,
+        ...displayedImages.map((image) => image.image_url),
+        ...(storedImages ?? []).map((image) => image.image_url),
+      ].filter(Boolean);
+
+      const storagePaths = Array.from(
+        new Set(
+          imageUrls
+            .map((imageUrl) => getStoragePathFromPublicUrl(imageUrl))
+            .filter((path): path is string => Boolean(path)),
+        ),
+      );
+      const hasSupabaseStorageImages = imageUrls.some((imageUrl) =>
+        imageUrl.includes(`/storage/v1/object/`),
+      );
+
+      if (hasSupabaseStorageImages && storagePaths.length === 0) {
+        throw new Error(
+          "Non sono riuscito a ricavare il percorso delle immagini nello storage. Il post non e stato eliminato.",
+        );
+      }
+
+      if (storagePaths.length > 0) {
+        const { data: removedFiles, error: storageError } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .remove(storagePaths);
+
+        if (storageError) {
+          throw new Error(
+            `Impossibile eliminare le immagini dallo storage: ${storageError.message}. Il post non e stato eliminato.`,
+          );
+        }
+
+        if (!removedFiles || removedFiles.length === 0) {
+          throw new Error(
+            `Supabase non ha confermato la rimozione dei file (${storagePaths.join(", ")}). Il post non e stato eliminato.`,
+          );
+        }
+      }
+
+      const { data: deletedPosts, error: postDeleteError } = await supabase
+        .from("japan_travel_posts")
+        .delete()
+        .eq("id", numericId)
+        .select("id");
+
+      if (postDeleteError) {
+        throw new Error(
+          `Le immagini sono state eliminate, ma il post no: ${postDeleteError.message}`,
+        );
+      }
+
+      if (!deletedPosts || deletedPosts.length === 0) {
+        throw new Error(
+          "Le immagini sono state eliminate, ma nessun post e stato rimosso dal database.",
+        );
+      }
+
+      const { error: imagesDeleteError } = await supabase
+        .from("post_images")
+        .delete()
+        .eq("post_id", numericId);
+
+      if (imagesDeleteError && imagesDeleteError.code !== "42501") {
+        throw new Error(
+          `Il post e stato eliminato, ma non i riferimenti alle immagini: ${imagesDeleteError.message}`,
+        );
+      }
+
+      await fetchPosts();
+      closeBootstrapModal("deletePostModal");
+      navigate("/");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Errore imprevisto durante l'eliminazione.";
+
+      console.error(message);
+      setDeleteError(message);
+    } finally {
+      setIsDeleting(false);
     }
-
-    await fetchPosts();
-    navigate("/");
   };
 
   if (loadingSinglePost && !effectiveDetails) {
@@ -214,6 +341,12 @@ export default function DetailsPage() {
             </button>
           </div>
         </section>
+
+        {deleteError && (
+          <div className="app-alert app-alert-danger" role="alert">
+            {deleteError}
+          </div>
+        )}
 
         <section className="detail-layout">
           <div>
@@ -314,7 +447,13 @@ export default function DetailsPage() {
         postId={numericId}
         onConfirm={handleDelete}
         title={postSource.title}
+        isDeleting={isDeleting}
+        errorMessage={deleteError}
       />
     </>
   );
 }
+
+
+
+
